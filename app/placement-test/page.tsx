@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, User, Phone, Target } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, User, Phone, Target, BarChart2, BookMarked, MessageSquare } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -35,7 +35,7 @@ const mockQuestions: Question[] = [
   { id: 19, section: 'Vocabulary', question: '19. She speaks English ___, so everyone can understand her easily.', options: ['A. loudly', 'B. fluently', 'C. quickly', 'D. silently'], correct: 1, explanation: '"Fluently" nghĩa là nói trôi chảy.' },
   { id: 20, section: 'Vocabulary', question: '20. The teacher asked us to ___ the text carefully before answering.', options: ['A. read', 'B. write', 'C. listen', 'D. speak'], correct: 0, explanation: '"Read" có nghĩa là đọc kỹ.' },
   
-  // Phần Reading
+  // Reading Passage
   { id: 21, section: 'Reading', question: '21. How old is Tom?', options: ['A. 20', 'B. 22', 'C. 25', 'D. 30'], correct: 2, explanation: 'Thông tin trong bài: "Tom is 25 years old."' },
   { id: 22, section: 'Reading', question: '22. What is Tom’s job?', options: ['A. Doctor', 'B. Teacher', 'C. Student', 'D. Engineer'], correct: 1, explanation: 'Thông tin trong bài: "He works as a teacher."' },
   { id: 23, section: 'Reading', question: '23. Why does Tom love his job?', options: ['A. Because it is easy', 'B. Because he enjoys helping students', 'C. Because he earns a lot of money', 'D. Because he travels often'], correct: 1, explanation: 'Thông tin trong bài: "...enjoys helping students learn."' },
@@ -117,28 +117,28 @@ export default function PlacementTestPage() {
     setCurrentStep('analyzing');
 
     const fallbackFeedback = {
-      task1: {
-        score: writing1.trim().length > 20 ? 8.0 : 4.5,
-        strengths: ['Đã trình bày đúng bố cục lá thư/email.', 'Nêu được thông tin điểm đến và trải nghiệm.'],
-        improvements: ['Cần bổ sung thêm từ vựng miêu tả cảm xúc B2.', 'Chú ý chia thì Quá khứ đơn đồng nhất.'],
-        grammarErrors: [
-          { original: 'I go to holiday last week', suggestion: 'I went on holiday last week', reason: 'Thì quá khứ đơn (last week)' },
-          { original: 'It was very happy', suggestion: 'It was a very happy trip', reason: 'Cấu trúc miêu tả chuyến đi' }
-        ]
-      },
-      task2: {
-        score: writing2.trim().length > 40 ? 16.0 : 8.5,
-        suggestedRevision: {
-          original: writing2 || 'Học viên chưa hoàn thành bài essay.',
-          suggested: 'Nowadays, mastering English has become an essential requirement for academic and professional success...'
-        }
-      },
-      overallFeedback: `Học viên ${fullName || 'bạn'} thể hiện lập luận khá tốt ở bài viết. Tuy nhiên cần chú ý sửa các lỗi chia thì cơ bản và áp dụng thêm 3-5 từ vựng học thuật VSTEP B2.`,
-      roadmap: [
-        'Tuần 1-2: Làm chủ 15 cấu trúc câu phức (Complex Sentences).',
-        'Tuần 3-4: Luyện tập viết Email Task 1 theo thời gian thực.',
-        'Tuần 5-6: Rèn luyện kỹ năng phát triển ý cho bài Essay Task 2.'
-      ]
+      task1Breakdown: { taskAchievement: 2.0, organization: 1.5, grammar: 2.0, vocabulary: 1.5, total: 7.0 },
+      task2Breakdown: { taskAchievement: 3.5, organization: 3.5, grammar: 3.5, vocabulary: 3.5, total: 14.0 },
+      strengths: [
+        'Bài viết thể hiện đúng dạng Email (Task 1) và Essay (Task 2).',
+        'Nêu được đầy đủ các ý chính theo yêu cầu đề bài.'
+      ],
+      areasForImprovement: [
+        'Cần chú ý chia thì Quá khứ đơn đồng nhất ở Task 1.',
+        'Bổ sung từ nối học thuật (Furthermore, However) cho Task 2.',
+        'Tránh lặp từ vựng cơ bản, sử dụng thêm câu phức.'
+      ],
+      suggestedCorrections: [
+        { original: 'I go to beach last week', suggestion: 'I went to the beach last week', reason: 'Thì quá khứ đơn (last week)' },
+        { original: 'English is very good for job', suggestion: 'English plays a pivotal role in career advancement', reason: 'Nâng cấp từ vựng B2 học thuật' }
+      ],
+      studyRecommendations: [
+        'Grammar: Ôn tập Thì Quá khứ đơn và Cấu trúc câu phức.',
+        'Vocabulary: Học bộ từ vựng VSTEP chủ đề Education & Work.',
+        'Organization: Luyện tập viết Mở bài - Thân bài - Kết bài tiêu chuẩn.'
+      ],
+      cefrLevel: 'B1 (Trung cấp)',
+      overallComment: `Chúc mừng ${fullName || 'bạn'} đã hoàn thành bài test! Bài viết của bạn phát triển ý tốt, dễ đọc. Hãy tiếp tục trau dồi từ vựng học thuật để nâng Band B2 chuẩn nhé!`
     };
 
     try {
@@ -276,12 +276,10 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* 🌟 PHẦN WRITING ĐÃ HIỂN THỊ TRỌN VẸN 2 ĐỀ BÀI CỤ THỂ */}
         {currentStep === 'writing' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
             <h2 className="text-xl font-bold text-blue-950 flex items-center gap-2"><FileText className="h-6 w-6 text-blue-600" /> Phần Thi Viết - Writing</h2>
             
-            {/* Task 1 */}
             <div>
               <h3 className="font-bold text-slate-900 text-sm mb-1">Task 1 – Short Writing (Email - 10 điểm)</h3>
               <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 leading-relaxed">
@@ -292,7 +290,6 @@ export default function PlacementTestPage() {
               <div className="text-right text-xs text-slate-500 mt-1">Số từ: <span className="font-bold text-blue-600">{countWords(writing1)}</span> words</div>
             </div>
 
-            {/* Task 2 */}
             <div>
               <h3 className="font-bold text-slate-900 text-sm mb-1">Task 2 – Essay Writing (20 điểm)</h3>
               <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 leading-relaxed">
@@ -314,20 +311,22 @@ export default function PlacementTestPage() {
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm space-y-4">
             <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
             <h2 className="text-2xl font-extrabold text-slate-900">🤖 AI đang phân tích bài viết của {fullName}...</h2>
-            <p className="text-sm text-slate-500">Đang chấm điểm lỗi ngữ pháp, từ vựng và tạo lộ trình học phù hợp...</p>
+            <p className="text-sm text-slate-500">Đang chấm điểm 4 tiêu chí Task Achievement, Organization, Grammar, Vocabulary...</p>
           </div>
         )}
 
+        {/* 🌟 MÀN HÌNH KẾT QUẢ VỚI BẢNG ĐIỂM BẮT CHƯỚC ĐÚNG TIÊU CHÍ KHUNG CỦA NA */}
         {currentStep === 'result' && (() => {
           const knowledgeScore = calculateKnowledgeScore();
-          const task1Score = aiFeedback?.task1?.score || 7.5;
-          const task2Score = aiFeedback?.task2?.score || 15.0;
-          const totalWriting = task1Score + task2Score;
+          const t1 = aiFeedback?.task1Breakdown || { taskAchievement: 2.0, organization: 1.5, grammar: 2.0, vocabulary: 1.5, total: 7.0 };
+          const t2 = aiFeedback?.task2Breakdown || { taskAchievement: 3.5, organization: 3.5, grammar: 3.5, vocabulary: 3.5, total: 14.0 };
+          const totalWriting = t1.total + t2.total;
           const totalScore = knowledgeScore + totalWriting;
           const placement = getCoursePlacement(knowledgeScore, totalWriting);
 
           return (
             <div className="space-y-8">
+              {/* Thẻ Kết quả Tổng quát */}
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <Award className="h-12 w-12 text-emerald-600 mx-auto mb-2" />
                 <h1 className="text-2xl font-bold text-slate-900">Kết Quả Đánh Giá Trình Độ Placement Test</h1>
@@ -338,7 +337,7 @@ export default function PlacementTestPage() {
                   <div className="text-4xl font-extrabold text-blue-600 my-1">{totalScore} <span className="text-lg text-slate-400 font-normal">/ 60 điểm</span></div>
                   <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t text-xs">
                     <div className="bg-white p-2.5 rounded-lg border">Trắc nghiệm: <b className="text-blue-600 text-sm block">{knowledgeScore} / 30đ</b></div>
-                    <div className="bg-white p-2.5 rounded-lg border">AI Writing: <b className="text-emerald-600 text-sm block">{totalWriting} / 30đ</b></div>
+                    <div className="bg-white p-2.5 rounded-lg border">AI Writing Score: <b className="text-emerald-600 text-sm block">{totalWriting} / 30đ</b></div>
                   </div>
                 </div>
 
@@ -348,71 +347,152 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-xl font-bold text-slate-900"><Sparkles className="h-6 w-6 text-blue-600" /> AI Feedback Chi Tiết Bài Viết</div>
-
-                <div className="bg-white rounded-2xl border p-6 shadow-sm space-y-4">
-                  <div className="flex justify-between items-center border-b pb-3">
-                    <h3 className="font-bold text-lg text-slate-900">Writing Task 1</h3>
-                    <span className="text-sm font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full">Score: {task1Score} / 10</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
-                      <span className="font-bold text-emerald-800 block mb-1">Điểm mạnh</span>
-                      {aiFeedback?.task1?.strengths?.map((s: string, i: number) => <div key={i} className="text-emerald-700">• {s}</div>)}
-                    </div>
-                    <div className="bg-amber-50 p-3 rounded-xl border border-amber-200">
-                      <span className="font-bold text-amber-800 block mb-1">Cần cải thiện</span>
-                      {aiFeedback?.task1?.improvements?.map((imp: string, i: number) => <div key={i} className="text-amber-700">• {imp}</div>)}
-                    </div>
-                  </div>
-
-                  {aiFeedback?.task1?.grammarErrors?.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="font-bold text-xs uppercase text-slate-500 mb-2">Lỗi Ngữ Pháp & Gợi Ý Sửa</h4>
-                      <div className="space-y-2">
-                        {aiFeedback.task1.grammarErrors.map((err: any, i: number) => (
-                          <div key={i} className="p-2.5 bg-slate-50 rounded-lg border flex justify-between text-xs">
-                            <div><span className="line-through text-rose-500 font-mono">🔴 {err.original}</span> $\rightarrow$ <span className="font-semibold text-emerald-600 font-mono">🟢 {err.suggestion}</span></div>
-                            <span className="text-[10px] text-slate-400">{err.reason}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              {/* 🌟 KHU VỰC BẢNG ĐIỂM AI WRITING ASSESSMENT CHI TIẾT DỰA TRÊN TIÊU CHÍ CỦA NA */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-8">
+                <div className="flex items-center gap-2 text-xl font-bold text-slate-900 border-b pb-4">
+                  <BarChart2 className="h-6 w-6 text-blue-600" /> AI Writing Assessment
                 </div>
 
-                <div className="bg-white rounded-2xl border p-6 shadow-sm space-y-4">
-                  <div className="flex justify-between items-center border-b pb-3">
-                    <h3 className="font-bold text-lg text-slate-900">Writing Task 2</h3>
-                    <span className="text-sm font-bold bg-purple-50 text-purple-600 px-3 py-1 rounded-full">Score: {task2Score} / 20</span>
+                {/* Writing Task 1 Breakdown */}
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-bold text-base text-blue-950">Writing Task 1 (Email) – 10 điểm</h3>
+                    <span className="font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-sm">Điểm Task 1: {t1.total}/10</span>
                   </div>
-                  {aiFeedback?.task2?.suggestedRevision && (
-                    <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-200 space-y-2 text-xs">
-                      <span className="font-bold text-blue-900 block">Đề Xuất Câu Viết Chuẩn B2 từ AI:</span>
-                      <p className="text-emerald-700 font-medium bg-emerald-50 p-2 rounded border border-emerald-200">🟢 {aiFeedback.task2.suggestedRevision.suggested}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">1. Task Achievement</span>
+                      <span className="text-blue-600 font-bold">{t1.taskAchievement} / 3.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Trả lời đúng chủ đề, đầy đủ các ý yêu cầu.</p>
                     </div>
-                  )}
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">2. Organization & Coherence</span>
+                      <span className="text-blue-600 font-bold">{t1.organization} / 2.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Có mở/kết bài email, ý tưởng mạch lạc.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">3. Grammar & Sentence Structure</span>
+                      <span className="text-blue-600 font-bold">{t1.grammar} / 3.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Độ chính xác thì, động từ, cấu trúc câu.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">4. Vocabulary</span>
+                      <span className="text-blue-600 font-bold">{t1.vocabulary} / 2.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Vốn từ đúng ngữ cảnh, chính tả, word forms.</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-lg space-y-4">
-                  <h3 className="font-bold text-lg text-blue-400">🤖 Nhận xét tổng quan của AI & Lộ trình học</h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">{aiFeedback?.overallFeedback}</p>
-                  <div className="border-t border-slate-800 pt-4">
-                    <span className="text-xs font-bold text-slate-400 block mb-2">LỘ TRÌNH TỰ SINH 4-6 TUẦN:</span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                      {aiFeedback?.roadmap?.map((item: string, i: number) => (
-                        <div key={i} className="flex items-center gap-2 text-emerald-400 bg-slate-800 p-2 rounded-lg">
-                          <CheckCircle2 className="h-4 w-4 shrink-0" />
-                          <span>{item}</span>
-                        </div>
-                      ))}
+                {/* Writing Task 2 Breakdown */}
+                <div className="border-t pt-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-bold text-base text-purple-950">Writing Task 2 (Essay) – 20 điểm</h3>
+                    <span className="font-black text-purple-600 bg-purple-50 px-3 py-1 rounded-full text-sm">Điểm Task 2: {t2.total}/20</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">1. Task Achievement</span>
+                      <span className="text-purple-600 font-bold">{t2.taskAchievement} / 5.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Trả lời đầy đủ đề, phát triển ý và ví dụ.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">2. Organization & Coherence</span>
+                      <span className="text-purple-600 font-bold">{t2.organization} / 5.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Bố cục Intro - Body - Conclusion logic.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">3. Grammar & Sentence Structure</span>
+                      <span className="text-purple-600 font-bold">{t2.grammar} / 5.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Đa dạng cấu trúc câu, hạn chế lỗi sai.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <span className="font-bold text-slate-800 block mb-1">4. Vocabulary</span>
+                      <span className="text-purple-600 font-bold">{t2.vocabulary} / 5.0 điểm</span>
+                      <p className="text-slate-500 text-[11px] mt-1">Đa dạng từ vựng, đúng collocations.</p>
                     </div>
                   </div>
+                </div>
+
+                {/* Tổng kết Writing */}
+                <div className="bg-blue-900 text-white p-4 rounded-2xl flex justify-between items-center text-sm font-bold">
+                  <span>OVERALL WRITING SCORE</span>
+                  <span className="text-xl text-amber-300 font-black">{totalWriting} / 30 ĐIỂM</span>
                 </div>
               </div>
 
+              {/* 🌟 PHẦN AI FEEDBACK CHI TIẾT THEO CÁC MỤC NA YÊU CẦU */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                <div className="flex items-center gap-2 text-xl font-bold text-slate-900 border-b pb-4">
+                  <Sparkles className="h-6 w-6 text-blue-600" /> AI Feedback Chi Tiết
+                </div>
+
+                {/* Strengths */}
+                <div>
+                  <h4 className="font-bold text-sm text-emerald-800 uppercase mb-2 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" /> Strengths (Điểm mạnh nổi bật)
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-emerald-900 bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                    {aiFeedback?.strengths?.map((s: string, i: number) => (
+                      <li key={i}>• {s}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Areas for Improvement */}
+                <div>
+                  <h4 className="font-bold text-sm text-amber-800 uppercase mb-2 flex items-center gap-1.5">
+                    <AlertTriangle className="h-4 w-4" /> Areas for Improvement (Cần ưu tiên cải thiện)
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-amber-900 bg-amber-50 p-4 rounded-xl border border-amber-200">
+                    {aiFeedback?.areasForImprovement?.map((imp: string, i: number) => (
+                      <li key={i}>• {imp}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Suggested Corrections */}
+                <div>
+                  <h4 className="font-bold text-sm text-slate-800 uppercase mb-2 flex items-center gap-1.5">
+                    <MessageSquare className="h-4 w-4 text-blue-600" /> Suggested Corrections (Sửa lỗi tiêu biểu)
+                  </h4>
+                  <div className="space-y-2 text-xs">
+                    {aiFeedback?.suggestedCorrections?.map((err: any, i: number) => (
+                      <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <span className="line-through text-rose-500 font-mono">🔴 {err.original}</span> $\rightarrow$ <span className="font-bold text-emerald-600 font-mono">🟢 {err.suggestion}</span>
+                        </div>
+                        <span className="text-[11px] text-slate-500 bg-white px-2.5 py-1 rounded-md border">{err.reason}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Study Recommendations */}
+                <div>
+                  <h4 className="font-bold text-sm text-blue-900 uppercase mb-2 flex items-center gap-1.5">
+                    <BookMarked className="h-4 w-4" /> Study Recommendations (Đề xuất nội dung học tiếp theo)
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-blue-900 bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    {aiFeedback?.studyRecommendations?.map((rec: string, i: number) => (
+                      <li key={i}>• {rec}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Estimated CEFR Level */}
+                <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 flex justify-between items-center text-xs">
+                  <span className="font-bold text-purple-900 uppercase">Estimated CEFR Level (Trình độ ước lượng):</span>
+                  <span className="font-black text-purple-700 text-sm bg-white px-3 py-1 rounded-full border border-purple-200">{aiFeedback?.cefrLevel || 'B1 (Trung cấp)'}</span>
+                </div>
+
+                {/* Overall Comment */}
+                <div className="bg-slate-900 text-white p-5 rounded-2xl space-y-2 text-xs leading-relaxed">
+                  <span className="font-bold text-blue-400 block uppercase">Overall Comment (Nhận xét tổng quan):</span>
+                  <p>{aiFeedback?.overallComment}</p>
+                </div>
+              </div>
+
+              {/* 💡 GIẢI THÍCH ĐÁP ÁN TRẮC NGHIỆM */}
               <div className="bg-white rounded-2xl border p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2"><BookOpen className="h-5 w-5 text-blue-600" /> Đáp Án & Giải Thích Chi Tiết 30 Câu Trắc Nghiệm</h3>
                 <div className="space-y-4">
