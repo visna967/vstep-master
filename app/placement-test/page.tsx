@@ -35,14 +35,14 @@ const mockQuestions: Question[] = [
   { id: 19, section: 'Vocabulary', question: '19. She speaks English ___, so everyone can understand her easily.', options: ['A. loudly', 'B. fluently', 'C. quickly', 'D. silently'], correct: 1, explanation: '"Fluently" nghĩa là nói trôi chảy.' },
   { id: 20, section: 'Vocabulary', question: '20. The teacher asked us to ___ the text carefully before answering.', options: ['A. read', 'B. write', 'C. listen', 'D. speak'], correct: 0, explanation: '"Read" có nghĩa là đọc kỹ.' },
   
-  // Phần Reading có đoạn văn đi kèm
+  // Phần Reading
   { id: 21, section: 'Reading', question: '21. How old is Tom?', options: ['A. 20', 'B. 22', 'C. 25', 'D. 30'], correct: 2, explanation: 'Thông tin trong bài: "Tom is 25 years old."' },
   { id: 22, section: 'Reading', question: '22. What is Tom’s job?', options: ['A. Doctor', 'B. Teacher', 'C. Student', 'D. Engineer'], correct: 1, explanation: 'Thông tin trong bài: "He works as a teacher."' },
   { id: 23, section: 'Reading', question: '23. Why does Tom love his job?', options: ['A. Because it is easy', 'B. Because he enjoys helping students', 'C. Because he earns a lot of money', 'D. Because he travels often'], correct: 1, explanation: 'Thông tin trong bài: "...enjoys helping students learn."' },
   { id: 24, section: 'Reading', question: '24. What does Tom like doing in his free time?', options: ['A. Hiking and reading', 'B. Cooking and swimming', 'C. Dancing and singing', 'D. Playing football'], correct: 0, explanation: 'Thông tin bài: "...hiking in the mountains and reading."' },
   { id: 25, section: 'Reading', question: '25. Who does Tom often spend weekends with?', options: ['A. His family', 'B. His students', 'C. His friends', 'D. His colleagues'], correct: 2, explanation: 'Thông tin trong bài: "...spends weekends with his friends."' },
   
-  // Câu 26 đã được cập nhật đáp án C. to seeing
+  // Câu 26 chuẩn C. to seeing
   { id: 26, section: 'Mixed', question: '26. I’m looking forward ___ you soon.', options: ['A. see', 'B. seeing', 'C. to seeing', 'D. saw'], correct: 2, explanation: 'Cấu trúc "look forward to + V-ing" (trông chờ, mong đợi).' },
   { id: 27, section: 'Mixed', question: '27. The film was ___ interesting that I watched it twice.', options: ['A. so', 'B. such', 'C. very', 'D. too'], correct: 0, explanation: 'Cấu trúc "so + Adj + that".' },
   { id: 28, section: 'Mixed', question: '28. She has visited many countries, ___ France and Germany.', options: ['A. including', 'B. include', 'C. includes', 'D. included'], correct: 0, explanation: '"Including" đóng vai trò như giới từ.' },
@@ -249,7 +249,6 @@ export default function PlacementTestPage() {
               <span className="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full">{mockQuestions[currentQuestionIndex].section}</span>
             </div>
 
-            {/* 📖 KHU VỰC HIỂN THỊ ĐOẠN VĂN ĐỌC HIỂU CHO CÂU 21 - 25 */}
             {currentQuestionIndex >= 20 && currentQuestionIndex <= 24 && (
               <div className="mb-6 p-4 bg-blue-50/60 rounded-xl border border-blue-200 text-sm text-slate-800 leading-relaxed shadow-sm">
                 <span className="font-bold block mb-1 text-blue-900">📖 Read the following passage to answer questions 21 to 25:</span>
@@ -277,19 +276,33 @@ export default function PlacementTestPage() {
           </div>
         )}
 
+        {/* 🌟 PHẦN WRITING ĐÃ HIỂN THỊ TRỌN VẸN 2 ĐỀ BÀI CỤ THỂ */}
         {currentStep === 'writing' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
             <h2 className="text-xl font-bold text-blue-950 flex items-center gap-2"><FileText className="h-6 w-6 text-blue-600" /> Phần Thi Viết - Writing</h2>
+            
+            {/* Task 1 */}
             <div>
               <h3 className="font-bold text-slate-900 text-sm mb-1">Task 1 – Short Writing (Email - 10 điểm)</h3>
+              <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 leading-relaxed">
+                Write an email to a friend telling them about your last holiday. Include: <br />
+                • Where you went | • What you did | • How you felt
+              </p>
               <textarea rows={4} className="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 outline-none" placeholder="Write your email here..." value={writing1} onChange={(e) => setWriting1(e.target.value)} />
-              <div className="text-right text-xs text-slate-500">Số từ: {countWords(writing1)} words</div>
+              <div className="text-right text-xs text-slate-500 mt-1">Số từ: <span className="font-bold text-blue-600">{countWords(writing1)}</span> words</div>
             </div>
+
+            {/* Task 2 */}
             <div>
               <h3 className="font-bold text-slate-900 text-sm mb-1">Task 2 – Essay Writing (20 điểm)</h3>
+              <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 leading-relaxed">
+                Write an essay on the topic: <b>“The importance of learning English today.”</b> Include: <br />
+                • Why English is useful | • How people can improve their English | • Your personal opinion
+              </p>
               <textarea rows={6} className="w-full p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 outline-none" placeholder="Write your essay here..." value={writing2} onChange={(e) => setWriting2(e.target.value)} />
-              <div className="text-right text-xs text-slate-500">Số từ: {countWords(writing2)} words</div>
+              <div className="text-right text-xs text-slate-500 mt-1">Số từ: <span className="font-bold text-blue-600">{countWords(writing2)}</span> words</div>
             </div>
+
             <div className="flex justify-between border-t pt-5">
               <button onClick={() => setCurrentStep('quiz')} className="text-sm font-semibold text-slate-500">Quay lại trắc nghiệm</button>
               <button onClick={handleFinalSubmit} className="bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg"><Sparkles className="h-4 w-4" /> Nộp Bài & Chấm Điểm AI</button>
