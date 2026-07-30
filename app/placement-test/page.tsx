@@ -34,12 +34,16 @@ const mockQuestions: Question[] = [
   { id: 18, section: 'Vocabulary', question: '18. The train was late because of a ___ problem.', options: ['A. chemical', 'B. physical', 'C. natural', 'D. technical'], correct: 3, explanation: '"Technical problem" nghĩa là sự cố kỹ thuật.' },
   { id: 19, section: 'Vocabulary', question: '19. She speaks English ___, so everyone can understand her easily.', options: ['A. loudly', 'B. fluently', 'C. quickly', 'D. silently'], correct: 1, explanation: '"Fluently" nghĩa là nói trôi chảy.' },
   { id: 20, section: 'Vocabulary', question: '20. The teacher asked us to ___ the text carefully before answering.', options: ['A. read', 'B. write', 'C. listen', 'D. speak'], correct: 0, explanation: '"Read" có nghĩa là đọc kỹ.' },
+  
+  // Phần Reading có đoạn văn đi kèm
   { id: 21, section: 'Reading', question: '21. How old is Tom?', options: ['A. 20', 'B. 22', 'C. 25', 'D. 30'], correct: 2, explanation: 'Thông tin trong bài: "Tom is 25 years old."' },
   { id: 22, section: 'Reading', question: '22. What is Tom’s job?', options: ['A. Doctor', 'B. Teacher', 'C. Student', 'D. Engineer'], correct: 1, explanation: 'Thông tin trong bài: "He works as a teacher."' },
   { id: 23, section: 'Reading', question: '23. Why does Tom love his job?', options: ['A. Because it is easy', 'B. Because he enjoys helping students', 'C. Because he earns a lot of money', 'D. Because he travels often'], correct: 1, explanation: 'Thông tin trong bài: "...enjoys helping students learn."' },
   { id: 24, section: 'Reading', question: '24. What does Tom like doing in his free time?', options: ['A. Hiking and reading', 'B. Cooking and swimming', 'C. Dancing and singing', 'D. Playing football'], correct: 0, explanation: 'Thông tin bài: "...hiking in the mountains and reading."' },
   { id: 25, section: 'Reading', question: '25. Who does Tom often spend weekends with?', options: ['A. His family', 'B. His students', 'C. His friends', 'D. His colleagues'], correct: 2, explanation: 'Thông tin trong bài: "...spends weekends with his friends."' },
-  { id: 26, section: 'Mixed', question: '26. I’m looking forward ___ you soon.', options: ['A. see', 'B. seeing', 'C. to see', 'D. saw'], correct: 1, explanation: 'Cấu trúc "look forward to + V-ing".' },
+  
+  // Câu 26 đã được cập nhật đáp án C. to seeing
+  { id: 26, section: 'Mixed', question: '26. I’m looking forward ___ you soon.', options: ['A. see', 'B. seeing', 'C. to seeing', 'D. saw'], correct: 2, explanation: 'Cấu trúc "look forward to + V-ing" (trông chờ, mong đợi).' },
   { id: 27, section: 'Mixed', question: '27. The film was ___ interesting that I watched it twice.', options: ['A. so', 'B. such', 'C. very', 'D. too'], correct: 0, explanation: 'Cấu trúc "so + Adj + that".' },
   { id: 28, section: 'Mixed', question: '28. She has visited many countries, ___ France and Germany.', options: ['A. including', 'B. include', 'C. includes', 'D. included'], correct: 0, explanation: '"Including" đóng vai trò như giới từ.' },
   { id: 29, section: 'Mixed', question: '29. He drives ___ than I do.', options: ['A. carefully', 'B. more carefully', 'C. most carefully', 'D. careful'], correct: 1, explanation: 'So sánh hơn của trạng từ dài: "more + adv + than".' },
@@ -109,11 +113,9 @@ export default function PlacementTestPage() {
     setCurrentStep('quiz');
   };
 
-  // 🔥 XỬ LÝ NỘP BÀI - ĐẢM BẢO HIỆN FEEDBACK CHI TIẾT 100%
   const handleFinalSubmit = async () => {
     setCurrentStep('analyzing');
 
-    // Mẫu Feedback AI dự phòng đảm bảo luôn luôn hiển thị siêu đẹp
     const fallbackFeedback = {
       task1: {
         score: writing1.trim().length > 20 ? 8.0 : 4.5,
@@ -246,7 +248,16 @@ export default function PlacementTestPage() {
               <span>Câu hỏi {currentQuestionIndex + 1} / {mockQuestions.length}</span>
               <span className="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full">{mockQuestions[currentQuestionIndex].section}</span>
             </div>
-            <h2 className="text-lg font-bold text-slate-900 my-4">{mockQuestions[currentQuestionIndex].question}</h2>
+
+            {/* 📖 KHU VỰC HIỂN THỊ ĐOẠN VĂN ĐỌC HIỂU CHO CÂU 21 - 25 */}
+            {currentQuestionIndex >= 20 && currentQuestionIndex <= 24 && (
+              <div className="mb-6 p-4 bg-blue-50/60 rounded-xl border border-blue-200 text-sm text-slate-800 leading-relaxed shadow-sm">
+                <span className="font-bold block mb-1 text-blue-900">📖 Read the following passage to answer questions 21 to 25:</span>
+                "Tom is 25 years old. He works as a teacher in a small town. He loves his job because he enjoys helping students learn. In his free time, Tom likes hiking in the mountains and reading history books. He often spends weekends with his friends."
+              </div>
+            )}
+
+            <h2 className="text-lg font-bold text-slate-900 mb-4">{mockQuestions[currentQuestionIndex].question}</h2>
             <div className="space-y-3 mb-8">
               {mockQuestions[currentQuestionIndex].options.map((option, idx) => (
                 <button key={idx} onClick={() => handleSelectOption(idx)} className={`w-full text-left p-4 rounded-xl border text-sm font-medium flex justify-between ${answers[mockQuestions[currentQuestionIndex].id] === idx ? 'border-blue-600 bg-blue-50/50 text-blue-900 ring-1 ring-blue-600' : 'border-slate-200 bg-white text-slate-700'}`}>
@@ -294,7 +305,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* 🌟 MÀN HÌNH KẾT QUẢ ĐẢM BẢO HIỆN ĐỦ FEEDBACK AI 100% */}
         {currentStep === 'result' && (() => {
           const knowledgeScore = calculateKnowledgeScore();
           const task1Score = aiFeedback?.task1?.score || 7.5;
@@ -325,7 +335,6 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* 🤖 KHU VỰC FEEDBACK AI CHI TIẾT */}
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-xl font-bold text-slate-900"><Sparkles className="h-6 w-6 text-blue-600" /> AI Feedback Chi Tiết Bài Viết</div>
 
@@ -391,7 +400,6 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* 💡 GIẢI THÍCH ĐÁP ÁN TRẮC NGHIỆM */}
               <div className="bg-white rounded-2xl border p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2"><BookOpen className="h-5 w-5 text-blue-600" /> Đáp Án & Giải Thích Chi Tiết 30 Câu Trắc Nghiệm</h3>
                 <div className="space-y-4">
