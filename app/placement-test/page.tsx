@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, RotateCcw, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, User, Phone, Target } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, User, Phone, Target } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -62,7 +62,7 @@ export default function PlacementTestPage() {
   const [phone, setPhone] = useState('');
   const [targetGoal, setTargetGoal] = useState('B2');
 
-  // Set thời gian đếm ngược 60 phút (3600 giây)
+  // Đếm ngược 60 phút
   const [timeLeft, setTimeLeft] = useState(3600);
 
   // Writing states
@@ -70,7 +70,6 @@ export default function PlacementTestPage() {
   const [writing2, setWriting2] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
-  // Bộ đếm ngược chạy liên tục
   useEffect(() => {
     if (currentStep !== 'quiz' && currentStep !== 'writing') return;
 
@@ -121,7 +120,6 @@ export default function PlacementTestPage() {
     setCurrentStep('quiz');
   };
 
-  // XỬ LÝ NỘP BÀI VÀ GỬI DỮ LIỆU
   const handleFinalSubmit = async () => {
     setCurrentStep('analyzing');
 
@@ -485,7 +483,7 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Màn hình 4: KẾT QUẢ */}
+        {/* Màn hình 4: KẾT QUẢ ĐẦY ĐỦ CẢ AI FEEDBACK + ĐÁP ÁN CHI TIẾT */}
         {currentStep === 'result' && (() => {
           const knowledgeScore = calculateKnowledgeScore();
           const task1Score = aiFeedback?.task1?.score || 7.5;
@@ -496,6 +494,7 @@ export default function PlacementTestPage() {
 
           return (
             <div className="space-y-8">
+              {/* Thẻ Kết quả Tổng quát */}
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Award className="h-8 w-8" />
@@ -531,38 +530,133 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* AI FEEDBACK WRITING */}
+              {/* 🌟 PHẦN AI FEEDBACK WRITING CHI TIẾT */}
               {aiFeedback && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
                     <Sparkles className="h-6 w-6 text-blue-600" /> AI Feedback Chi Tiết 2 Bài Viết
                   </div>
 
+                  {/* Writing Task 1 Feedback */}
                   <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
                     <div className="flex justify-between items-center border-b pb-3">
                       <h3 className="font-bold text-lg text-slate-900">Writing Task 1</h3>
                       <span className="text-sm font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full">
-                        Overall Score: {aiFeedback.task1.score} / 10
+                        Overall Score: {aiFeedback.task1?.score || 7.5} / 10
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-200">
                         <span className="font-bold text-emerald-800 block mb-1">Điểm mạnh</span>
-                        {aiFeedback.task1.strengths?.map((s: string, i: number) => (
+                        {aiFeedback.task1?.strengths?.map((s: string, i: number) => (
                           <div key={i} className="text-emerald-700">{s}</div>
                         ))}
                       </div>
                       <div className="bg-amber-50/60 p-3 rounded-xl border border-amber-200">
                         <span className="font-bold text-amber-800 block mb-1">Cần cải thiện</span>
-                        {aiFeedback.task1.improvements?.map((imp: string, i: number) => (
+                        {aiFeedback.task1?.improvements?.map((imp: string, i: number) => (
                           <div key={i} className="text-amber-700">{imp}</div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Grammar Errors (Grammarly style) */}
+                    {aiFeedback.task1?.grammarErrors?.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2">Grammar Errors & Suggestions</h4>
+                        <div className="space-y-2">
+                          {aiFeedback.task1.grammarErrors.map((err: any, i: number) => (
+                            <div key={i} className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
+                              <div className="space-x-3">
+                                <span className="line-through text-rose-500 font-mono">🔴 {err.original}</span>
+                                <span className="font-semibold text-emerald-600 font-mono">🟢 {err.suggestion}</span>
+                              </div>
+                              <span className="text-[10px] text-slate-400 bg-white px-2 py-0.5 rounded border">{err.reason}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Writing Task 2 Feedback */}
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                    <div className="flex justify-between items-center border-b pb-3">
+                      <h3 className="font-bold text-lg text-slate-900">Writing Task 2</h3>
+                      <span className="text-sm font-bold bg-purple-50 text-purple-600 px-3 py-1 rounded-full">
+                        Estimated Score: {aiFeedback.task2?.score || 15.0} / 20
+                      </span>
+                    </div>
+
+                    {/* Suggested Revision (AI Highlight) */}
+                    {aiFeedback.task2?.suggestedRevision && (
+                      <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-200 space-y-2">
+                        <span className="font-bold text-xs text-blue-900 block">Suggested Version (AI Highlight)</span>
+                        <p className="text-xs text-rose-600 line-through bg-white p-2 rounded border">
+                          🟡 {aiFeedback.task2.suggestedRevision.original}
+                        </p>
+                        <p className="text-xs text-emerald-700 font-medium bg-emerald-50 p-2 rounded border border-emerald-200">
+                          🟢 {aiFeedback.task2.suggestedRevision.suggested}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* General AI Review & Roadmap */}
+                  <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-lg space-y-4">
+                    <h3 className="font-bold text-lg text-blue-400 flex items-center gap-2">
+                      🤖 Nhận xét tổng quan của AI & Lộ trình 4–6 tuần
+                    </h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {aiFeedback.overallFeedback}
+                    </p>
+                    <div className="border-t border-slate-800 pt-4">
+                      <span className="text-xs font-bold text-slate-400 block mb-2">LỘ TRÌNH CẢI THIỆN TỰ SINH:</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        {aiFeedback.roadmap?.map((item: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2 text-emerald-400 bg-slate-800 p-2 rounded-lg">
+                            <CheckCircle2 className="h-4 w-4 shrink-0" />
+                            <span>{item}</span>
+                          </div>
                         ))}
                       </div>
                     </div>
                   </div>
                 </div>
               )}
+
+              {/* 💡 BẢNG CHI TIẾT ĐÁP ÁN & GIẢI THÍCH 30 CÂU TRẮC NGHIỆM */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-blue-600" /> Chi Tiết Đáp Án 30 Câu Trắc Nghiệm
+                </h3>
+                <div className="space-y-4">
+                  {mockQuestions.map((q) => {
+                    const userAnswer = answers[q.id];
+                    const isCorrect = userAnswer === q.correct;
+                    return (
+                      <div key={q.id} className={`p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'}`}>
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <span className="font-bold text-slate-900">{q.question}</span>
+                          {isCorrect ? (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                              <CheckCircle className="h-3.5 w-3.5" /> Đúng (+1đ)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-100 px-2.5 py-0.5 rounded-full">
+                              <XCircle className="h-3.5 w-3.5" /> Sai (0đ)
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-slate-500 bg-white/80 p-2.5 rounded-lg border border-slate-200/60 mt-2">
+                          💡 <b>Giải thích:</b> {q.explanation}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           );
         })()}
