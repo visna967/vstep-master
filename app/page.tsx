@@ -1,8 +1,23 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { Star, ArrowRight, ClipboardCheck } from 'lucide-react';
+import { Star, ArrowRight, ClipboardCheck, ShieldCheck } from 'lucide-react';
 
 export default function LandingPage() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Kiểm tra chìa khóa Admin trong máy
+    if (typeof window !== 'undefined') {
+      const adminKey = localStorage.getItem('vstep_admin_mode');
+      if (adminKey === 'true') {
+        setIsAdmin(true);
+      }
+    }
+  }, []);
+
   const levels = [
     { title: 'Trình độ A1 - Bắt đầu', desc: 'Nền tảng từ vựng và ngữ pháp cơ bản cho người mới bắt đầu.' },
     { title: 'Trình độ A2 - Sơ cấp', desc: 'Giao tiếp tình huống hàng ngày, tự tin đọc hiểu đoạn văn ngắn.' },
@@ -11,8 +26,21 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 relative">
       <Navbar />
+
+      {/* 🔒 NÚT ADMIN ẨN - CHỈ HIỆN KHI MÁY BẬT CHÌA KHÓA */}
+      {isAdmin && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <Link 
+            href="/dashboard/test-leads" 
+            className="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-3 rounded-full shadow-2xl border border-slate-700 transition-all flex items-center gap-2 text-sm"
+          >
+            <ShieldCheck className="h-5 w-5 text-emerald-400" />
+            <span>Xem danh sách làm test</span>
+          </Link>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center md:py-28 max-w-5xl">
