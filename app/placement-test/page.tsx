@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, RotateCcw, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, XCircle as XCircleIcon } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, Clock, ArrowRight, Award, RotateCcw, FileText, Check, AlertTriangle, Sparkles, Loader2, CheckCircle2, User, Phone, Target } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -56,6 +56,12 @@ export default function PlacementTestPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
+  // States thông tin học sinh
+  const [showModal, setShowModal] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [targetGoal, setTargetGoal] = useState('B2');
+
   // Set thời gian đếm ngược 60 phút (3600 giây)
   const [timeLeft, setTimeLeft] = useState(3600);
 
@@ -64,7 +70,7 @@ export default function PlacementTestPage() {
   const [writing2, setWriting2] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
-  // Bộ đếm ngược chạy liên tục khi đang ở phần trắc nghiệm hoặc bài viết
+  // Bộ đếm ngược chạy liên tục
   useEffect(() => {
     if (currentStep !== 'quiz' && currentStep !== 'writing') return;
 
@@ -72,7 +78,7 @@ export default function PlacementTestPage() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleFinalSubmit(); // Tự động nộp bài khi hết 60 phút
+          handleFinalSubmit();
           return 0;
         }
         return prev - 1;
@@ -104,15 +110,33 @@ export default function PlacementTestPage() {
     return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
   };
 
-  // 🔥 XỬ LÝ NỘP BÀI VÀ GỌI AI CHẤM FEEDBACK
+  const handleStartQuiz = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName.trim() || !phone.trim()) {
+      alert('Vui lòng nhập đầy đủ Họ tên và Số điện thoại/Zalo để làm bài test!');
+      return;
+    }
+    setShowModal(false);
+    setTimeLeft(3600);
+    setCurrentStep('quiz');
+  };
+
+  // XỬ LÝ NỘP BÀI VÀ GỬI DỮ LIỆU
   const handleFinalSubmit = async () => {
-    setCurrentStep('analyzing'); // Chuyển sang màn hình "🤖 AI đang phân tích..."
+    setCurrentStep('analyzing');
 
     try {
       const res = await fetch('/api/evaluate-writing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task1: writing1, task2: writing2 })
+        body: JSON.stringify({ 
+          task1: writing1, 
+          task2: writing2,
+          studentName: fullName,
+          studentPhone: phone,
+          targetGoal: targetGoal,
+          knowledgeScore: calculateKnowledgeScore()
+        })
       });
 
       const data = await res.json();
@@ -122,7 +146,7 @@ export default function PlacementTestPage() {
     } catch (error) {
       console.error('Lỗi khi chấm AI:', error);
     } finally {
-      setCurrentStep('result'); // Chuyển sang màn hình xem kết quả
+      setCurrentStep('result');
     }
   };
 
@@ -175,7 +199,6 @@ export default function PlacementTestPage() {
             <span className="tracking-tight text-slate-900">VSTEP<span className="text-blue-600">MASTER</span></span>
           </Link>
 
-          {/* Đồng hồ Đếm ngược 60 Phút */}
           {(currentStep === 'quiz' || currentStep === 'writing') && (
             <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-mono text-sm font-bold border transition-all ${
               timeLeft < 300 ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse' : 'bg-slate-100 text-slate-700 border-slate-200'
@@ -214,14 +237,87 @@ export default function PlacementTestPage() {
             </div>
 
             <button
-              onClick={() => {
-                setTimeLeft(3600);
-                setCurrentStep('quiz');
-              }}
+              onClick={() => setShowModal(true)}
               className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-md transition-all inline-flex items-center justify-center gap-2"
             >
               Bắt Đầu Làm Bài <ArrowRight className="h-5 w-5" />
             </button>
+          </div>
+        )}
+
+        {/* POPUP MODAL ĐIỀN THÔNG TIN HỌC SINH */}
+        {showModal && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 relative">
+              <button 
+                onClick={() => setShowModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold p-2"
+              >
+                ✕
+              </button>
+
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <User className="h-6 w-6" />
+                </div>
+                <h2 className="text-xl font-black text-slate-900">THÔNG TIN HỌC VIÊN</h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Nhập thông tin để giáo viên gửi bảng phân tích chi tiết và tư vấn lộ trình VSTEP nha!
+                </p>
+              </div>
+
+              <form onSubmit={handleStartQuiz} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5 text-blue-600" /> Họ và Tên <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-blue-600" /> Số điện thoại / Zalo <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Ví dụ: 0912345678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center gap-1.5">
+                    <Target className="h-3.5 w-3.5 text-blue-600" /> Mục tiêu VSTEP
+                  </label>
+                  <select
+                    value={targetGoal}
+                    onChange={(e) => setTargetGoal(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium bg-white"
+                  >
+                    <option value="B1">Mục tiêu VSTEP B1 (Đầu ra Đại học/Cao học)</option>
+                    <option value="B2">Mục tiêu VSTEP B2 (Công chức/Giáo viên)</option>
+                    <option value="C1">Mục tiêu VSTEP C1 (Nâng cao)</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition mt-3 flex items-center justify-center gap-2 text-sm"
+                >
+                  🚀 Bắt Đầu Làm Bài Ngay
+                </button>
+              </form>
+            </div>
           </div>
         )}
 
@@ -376,7 +472,7 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* 🤖 Màn hình 3.5: AI Đang Phân Tích (5-15 giây) */}
+        {/* Màn hình 3.5: AI Đang Phân Tích */}
         {currentStep === 'analyzing' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm space-y-4 animate-pulse">
             <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto">
@@ -389,7 +485,7 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Màn hình 4: KẾT QUẢ & AI FEEDBACK ĂN TIỀN */}
+        {/* Màn hình 4: KẾT QUẢ */}
         {currentStep === 'result' && (() => {
           const knowledgeScore = calculateKnowledgeScore();
           const task1Score = aiFeedback?.task1?.score || 7.5;
@@ -400,12 +496,12 @@ export default function PlacementTestPage() {
 
           return (
             <div className="space-y-8">
-              {/* Thẻ Kết quả Tổng quát */}
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Award className="h-8 w-8" />
                 </div>
                 <h1 className="text-2xl font-bold text-slate-900">Kết Quả Đánh Giá Trình Độ Placement Test</h1>
+                <p className="text-sm text-slate-500 mt-1">Học viên: <b className="text-blue-600">{fullName}</b> ({phone})</p>
 
                 <div className="my-6 p-6 bg-slate-50 rounded-2xl border border-slate-200 max-w-xl mx-auto">
                   <div className="text-xs uppercase tracking-wider font-bold text-slate-400">Tổng Điểm Đạt Được</div>
@@ -435,14 +531,13 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* 🌟 PHẦN AI FEEDBACK WRITING CHI TIẾT */}
+              {/* AI FEEDBACK WRITING */}
               {aiFeedback && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
                     <Sparkles className="h-6 w-6 text-blue-600" /> AI Feedback Chi Tiết 2 Bài Viết
                   </div>
 
-                  {/* Writing Task 1 Feedback */}
                   <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
                     <div className="flex justify-between items-center border-b pb-3">
                       <h3 className="font-bold text-lg text-slate-900">Writing Task 1</h3>
@@ -465,103 +560,9 @@ export default function PlacementTestPage() {
                         ))}
                       </div>
                     </div>
-
-                    {/* Grammar Errors (Grammarly style) */}
-                    {aiFeedback.task1.grammarErrors?.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2">Grammar Errors & Suggestions</h4>
-                        <div className="space-y-2">
-                          {aiFeedback.task1.grammarErrors.map((err: any, i: number) => (
-                            <div key={i} className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
-                              <div className="space-x-3">
-                                <span className="line-through text-rose-500 font-mono">🔴 {err.original}</span>
-                                <span className="font-semibold text-emerald-600 font-mono">🟢 {err.suggestion}</span>
-                              </div>
-                              <span className="text-[10px] text-slate-400 bg-white px-2 py-0.5 rounded border">{err.reason}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Writing Task 2 Feedback */}
-                  <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-                    <div className="flex justify-between items-center border-b pb-3">
-                      <h3 className="font-bold text-lg text-slate-900">Writing Task 2</h3>
-                      <span className="text-sm font-bold bg-purple-50 text-purple-600 px-3 py-1 rounded-full">
-                        Estimated Score: {aiFeedback.task2.score} / 20
-                      </span>
-                    </div>
-
-                    {/* Suggested Revision (AI Highlight) */}
-                    {aiFeedback.task2.suggestedRevision && (
-                      <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-200 space-y-2">
-                        <span className="font-bold text-xs text-blue-900 block">Suggested Version (AI Highlight)</span>
-                        <p className="text-xs text-rose-600 line-through bg-white p-2 rounded border">
-                          🟡 {aiFeedback.task2.suggestedRevision.original}
-                        </p>
-                        <p className="text-xs text-emerald-700 font-medium bg-emerald-50 p-2 rounded border border-emerald-200">
-                          🟢 {aiFeedback.task2.suggestedRevision.suggested}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* General AI Review & Roadmap */}
-                  <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-lg space-y-4">
-                    <h3 className="font-bold text-lg text-blue-400 flex items-center gap-2">
-                      🤖 Nhận xét tổng quan của AI & Lộ trình 4–6 tuần
-                    </h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {aiFeedback.overallFeedback}
-                    </p>
-                    <div className="border-t border-slate-800 pt-4">
-                      <span className="text-xs font-bold text-slate-400 block mb-2">LỘ TRÌNH CẢI THIỆN TỰ SINH:</span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        {aiFeedback.roadmap?.map((item: string, i: number) => (
-                          <div key={i} className="flex items-center gap-2 text-emerald-400 bg-slate-800 p-2 rounded-lg">
-                            <CheckCircle2 className="h-4 w-4 shrink-0" />
-                            <span>{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}
-
-              {/* Bảng Đáp án Trắc nghiệm */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-blue-600" /> Chi Tiết Đáp Án 30 Câu Trắc Nghiệm
-                </h3>
-                <div className="space-y-4">
-                  {mockQuestions.map((q) => {
-                    const userAnswer = answers[q.id];
-                    const isCorrect = userAnswer === q.correct;
-                    return (
-                      <div key={q.id} className={`p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'}`}>
-                        <div className="flex justify-between items-start gap-2 mb-2">
-                          <span className="font-bold text-slate-900">{q.question}</span>
-                          {isCorrect ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                              <CheckCircle className="h-3.5 w-3.5" /> Đúng (+1đ)
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-100 px-2.5 py-0.5 rounded-full">
-                              <XCircle className="h-3.5 w-3.5" /> Sai (0đ)
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-slate-500 bg-white/80 p-2.5 rounded-lg border border-slate-200/60 mt-2">
-                          💡 <b>Giải thích:</b> {q.explanation}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
             </div>
           );
         })()}
