@@ -80,10 +80,7 @@ export default function PlacementTestPage() {
   const [targetGoal, setTargetGoal] = useState('B2');
 
   const [timeLeft, setTimeLeft] = useState(3600);
-  
-  // ✅ Ô viết thư để trống hoàn toàn để học viên tự viết
   const [writingEmail, setWritingEmail] = useState('');
-  
   const [savedWriting, setSavedWriting] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
@@ -144,7 +141,6 @@ export default function PlacementTestPage() {
     setCurrentStep('listening');
   };
 
-  // ✅ Hàm dự phòng thông minh: Đồng bộ hoàn hảo điểm số và feedback theo số từ thực tế
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
     const words = countWords(trimmed);
@@ -173,7 +169,7 @@ export default function PlacementTestPage() {
       suggestedCorrections: [
         {
           original: firstSentence,
-          suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể mở đầu tự nhiên hơn như "Dear Alex, Hope everything is going well!").`,
+          suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể mở đầu tự nhiên hơn với "Dear Alex, Hope everything is going well!").`,
           reason: 'Cải thiện văn phong mở đầu thư thân mật.'
         }
       ],
@@ -446,9 +442,28 @@ export default function PlacementTestPage() {
 
             <div className="flex justify-between pt-4 border-t">
               <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('reading'); }} className="text-sm font-semibold text-slate-500">Quay lại Reading</button>
-              <button onClick={handleFinalSubmit} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg">
-                <Sparkles className="h-4 w-4" /> Nộp Bài & Nhận Kết Quả AI
-              </button>
+              
+              <div className="flex gap-2">
+                {/* Nút phụ mở ChatGPT chấm bài */}
+                <button 
+                  onClick={() => {
+                    if (!writingEmail.trim()) {
+                      alert('Vui lòng viết nội dung email trước khi chấm điểm!');
+                      return;
+                    }
+                    const prompt = `Bạn là giám khảo chấm thi VSTEP Writing B1-B2. Hãy chấm điểm bài viết email sau theo thang điểm 30 (Task Achievement, Organization, Grammar, Vocabulary), chỉ ra lỗi sai và gợi ý cách sửa:\n\n---\n${writingEmail}\n---`;
+                    const url = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg text-sm"
+                >
+                  <Sparkles className="h-4 w-4" /> Chấm bằng ChatGPT
+                </button>
+
+                <button onClick={handleFinalSubmit} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg text-sm">
+                  <Sparkles className="h-4 w-4" /> Nộp Bài & Nhận Kết Quả AI
+                </button>
+              </div>
             </div>
           </div>
         )}
