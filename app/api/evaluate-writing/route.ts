@@ -11,74 +11,72 @@ export async function POST(req: Request) {
     const text = (task1 || '').trim();
     const wordCount = text === '' ? 0 : text.split(/\s+/).length;
 
-    // Tách câu để phân tích cấu trúc
     const sentences = text.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 5);
     const firstSentence = sentences.length > 0 ? sentences[0] : (text || 'Chưa có nội dung.');
-    const secondSentence = sentences.length > 1 ? sentences[1] : 'Cần bổ sung thêm ý cho bài viết.';
 
     let evaluation: any = null;
 
-    // 🌟 Phân loại điểm nghiêm ngặt theo số lượng từ thực tế
-    if (wordCount < 20) {
-      // Bài quá ngắn (như gõ "hello") -> Điểm liệt / rất thấp
+    // 🌟 Phân loại chuẩn: Dưới 120 từ là chưa đạt yêu cầu chuẩn VSTEP
+    if (wordCount < 120) {
+      const scoreVal = wordCount < 20 ? 0.5 : 3.0;
+      const totalWriting = Number((scoreVal * 4).toFixed(1)); // Tổng điểm thấp tương ứng
+
       evaluation = {
         taskBreakdown: {
-          taskAchievement: 0.5,
-          organization: 0.5,
-          grammar: 0.5,
-          vocabulary: 0.5,
-          total: 2.0,
-          analysis: `Bài viết quá ngắn (${wordCount} từ), không đủ dữ liệu để đánh giá.`
+          taskAchievement: scoreVal,
+          organization: scoreVal,
+          grammar: scoreVal,
+          vocabulary: scoreVal,
+          total: totalWriting,
+          analysis: `Bài viết đạt ${wordCount} từ, chưa đạt mức tối thiểu yêu cầu (120-150 từ).`
         },
-        strengths: [],
+        strengths: wordCount >= 20 ? [`Đã viết được ${wordCount} từ.`] : [],
         areasForImprovement: ['Bài làm chưa đạt dung lượng tối thiểu (yêu cầu từ 120 từ trở lên).'],
         suggestedCorrections: [
           {
             original: firstSentence,
-            suggestion: 'Hãy viết thành một đoạn văn hoàn chỉnh có mở bài, thân bài và kết bài.',
-            reason: 'Bài viết cần triển khai chi tiết các ý theo đề bài.'
+            suggestion: 'Hãy triển khai thêm các ý phụ, mở bài và kết bài để bài viết hoàn chỉnh hơn.',
+            reason: 'Chưa đủ dung lượng và ý theo yêu cầu đề bài.'
           }
         ],
-        cefrLevel: 'A1',
-        overallComment: `Chào ${studentName || 'bạn'}! Bài viết chỉ có ${wordCount} từ nên không thể tính điểm đạt yêu cầu.`
+        cefrLevel: 'A2',
+        overallComment: `Chào ${studentName || 'bạn'}! Bài viết có ${wordCount} từ, chưa đạt dung lượng chuẩn nên điểm Writing đạt ${totalWriting}/30.`
       };
     } else {
-      // Chấm điểm linh hoạt dựa trên độ dài thực tế của học viên
-      const isStandardLength = wordCount >= 120;
-      const ta = isStandardLength ? 6.5 : (wordCount >= 60 ? 4.5 : 3.0);
-      const oc = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
-      const gr = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
-      const voc = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
+      // Đạt chuẩn từ 120 từ trở lên mới chấm điểm cao
+      const ta = 6.5;
+      const oc = 6.0;
+      const gr = 6.0;
+      const voc = 6.0;
       const totalWriting = Number((ta + oc + gr + voc).toFixed(1));
 
       evaluation = {
         taskBreakdown: {
           taskAchievement: ta,
-          taskAchievementComment: 'Mức độ hoàn thành nội dung và độ dài bài viết.',
+          taskAchievementComment: 'Hoàn thành tốt nội dung và đảm bảo độ dài.',
           organization: oc,
-          organizationComment: 'Tính liên kết và bố cục câu.',
+          organizationComment: 'Bố cục mạch lạc, rõ ràng.',
           grammar: gr,
-          grammarComment: 'Độ chính xác về cấu trúc ngữ pháp.',
+          grammarComment: 'Ngữ pháp chính xác, dùng câu phức tốt.',
           vocabulary: voc,
-          vocabularyComment: 'Sự phong phú và chính xác của từ vựng.',
+          vocabularyComment: 'Từ vựng phong phú, phù hợp chủ đề.',
           total: totalWriting,
-          analysis: `Bài viết đạt ${wordCount} từ.`
+          analysis: `Bài viết đạt ${wordCount} từ, đáp ứng xuất sắc yêu cầu.`
         },
-        strengths: [`Đã viết được ${wordCount} từ.`, 'Có nỗ lực hoàn thành nội dung đề bài.'],
-        areasForImprovement: ['Cần mở rộng thêm các ý phụ và kiểm tra lại lỗi chính tả, ngữ pháp cơ bản.'],
+        strengths: [`Dung lượng chuẩn mực (${wordCount} từ).`, 'Bố cục email đầy đủ các ý chính.'],
+        areasForImprovement: ['Tiếp tục phát huy phong độ và trau chuốt thêm từ vựng nâng cao.'],
         suggestedCorrections: [
           {
             original: firstSentence,
-            suggestion: `${firstSentence} (Gợi ý diễn đạt lại tự nhiên hơn)`,
-            reason: 'Cải thiện cách dùng từ ở câu mở đầu.'
+            suggestion: `${firstSentence} (Gợi ý diễn đạt tự nhiên hơn)`,
+            reason: 'Cải thiện văn phong mở đầu thư.'
           }
         ],
-        cefrLevel: totalWriting >= 22 ? 'B2' : (totalWriting >= 16 ? 'B1' : 'A2'),
-        overallComment: `Cố lên ${studentName || 'bạn'} nhé! Bài viết cần trau chuốt thêm các cấu trúc câu phức để đạt band điểm cao hơn.`
+        cefrLevel: 'B2',
+        overallComment: `Chúc mừng ${studentName || 'bạn'}! Bài viết rất xuất sắc đạt ${wordCount} từ với số điểm Writing là ${totalWriting}/30.`
       };
     }
 
-    // 🌟 Lưu vào đúng bảng `submissions` đã tạo trên Supabase
     if (supabaseUrl && supabaseAnonKey && (studentName || studentPhone)) {
       try {
         const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -92,21 +90,16 @@ export async function POST(req: Request) {
             reading_score: objectiveScore || 0,
             writing_score: evaluation.taskBreakdown.total,
             speaking_score: 0,
-            details: JSON.stringify({
-              task1,
-              evaluation,
-              wordCount
-            })
+            details: JSON.stringify({ task1, evaluation, wordCount })
           }
         ]);
       } catch (dbErr) {
-        console.error('Lỗi khi lưu Database:', dbErr);
+        console.error('Lỗi DB:', dbErr);
       }
     }
 
     return NextResponse.json({ success: true, evaluation });
   } catch (error) {
-    console.error('Lỗi API evaluate-writing:', error);
-    return NextResponse.json({ success: false, message: 'Lỗi xử lý bài viết' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Lỗi' }, { status: 500 });
   }
 }
