@@ -81,6 +81,7 @@ export default function PlacementTestPage() {
 
   const [timeLeft, setTimeLeft] = useState(3600);
   const [writingEmail, setWritingEmail] = useState('');
+  const [savedWriting, setSavedWriting] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
   useEffect(() => {
@@ -142,10 +143,30 @@ export default function PlacementTestPage() {
 
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
-    const words = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
-    
-    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(s => s.length > 5);
-    const firstBodySentence = sentences.length > 1 ? sentences[1] : (sentences[0] || trimmed || 'I think online learning is great.');
+    const words = countWords(trimmed);
+    const lower = trimmed.toLowerCase();
+
+    const hasOpinion = lower.includes('think') || lower.includes('opinion') || lower.includes('choice') || lower.includes('good') || lower.includes('believe');
+    const hasProsCons = lower.includes('advantage') || lower.includes('disadvantage') || lower.includes('benefit') || lower.includes('flexib') || lower.includes('distract') || lower.includes('convenient');
+    const hasAdvice = lower.includes('suggest') || lower.includes('advice') || lower.includes('should') || lower.includes('recommend');
+
+    let ta = 2.0; 
+    let oc = 2.0; 
+    let gr = 2.0; 
+    let voc = 2.0; 
+
+    if (words < 50) {
+      ta = 3.0; oc = 3.0; gr = 3.5; voc = 3.0; 
+    } else if (words < 110) {
+      ta = 5.0; oc = 5.0; gr = 5.0; voc = 5.0; 
+    } else {
+      ta = hasOpinion && hasProsCons && hasAdvice ? 7.0 : 6.0;
+      oc = 6.5;
+      gr = 6.0;
+      voc = 6.0;
+    }
+
+    const totalWriting = Number((ta + oc + gr + voc).toFixed(1)); 
 
     let wordStatus = {
       label: 'Đạt chuẩn dung lượng (120 - 150 từ)',
@@ -153,66 +174,66 @@ export default function PlacementTestPage() {
       badge: 'ĐẠT YÊU CẦU'
     };
 
-    if (words < 20) {
-      wordStatus = { label: `Chưa đạt: Quá ngắn (${words}/120 từ)`, color: 'text-rose-700 bg-rose-50 border-rose-300', badge: 'KHÔNG ĐẠT' };
-    } else if (words < 70) {
-      wordStatus = { label: `Chưa đạt: Thiếu từ (${words}/120 từ)`, color: 'text-amber-700 bg-amber-50 border-amber-300', badge: 'THIẾU TỪ' };
+    if (words < 70) {
+      wordStatus = { label: `Chưa đạt: Thiếu từ (${words}/120 từ)`, color: 'text-rose-700 bg-rose-50 border-rose-300', badge: 'CHƯA ĐẠT' };
+    } else if (words < 110) {
+      wordStatus.label = `Tương đối đạt (${words}/120 từ)`;
     }
 
-    const isLongEnough = words >= 110;
-    const ta = isLongEnough ? 6.5 : 5.0;
-    const oc = isLongEnough ? 6.0 : 5.0;
-    const totalWriting = Number((ta + oc + 5.5 + 5.5).toFixed(1));
+    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(s => s.length > 5);
+    const firstBodySentence = sentences.length > 1 ? sentences[1] : (sentences[0] || trimmed || 'I think online learning is great.');
 
     return {
       wordCount: words,
       wordStatus,
       taskRequirements: [
-        { req: 'Nêu quan điểm về việc học tiếng Anh online', passed: words > 10, comment: 'Đã hoàn thành.' },
-        { req: 'Phân tích ưu điểm / nhược điểm', passed: words > 30, comment: 'Đã phân tích.' },
-        { req: 'Đưa ra lời khuyên học hiệu quả', passed: words > 50, comment: 'Đã đưa ra lời khuyên.' }
+        { req: 'Nêu quan điểm về việc học tiếng Anh online', passed: hasOpinion, comment: hasOpinion ? 'Đã nêu rõ quan điểm.' : 'Chưa rõ quan điểm.' },
+        { req: 'Phân tích ưu điểm / nhược điểm', passed: hasProsCons, comment: hasProsCons ? 'Đã phân tích ưu/nhược điểm.' : 'Thiếu phân tích chi tiết.' },
+        { req: 'Đưa ra lời khuyên học hiệu quả', passed: hasAdvice, comment: hasAdvice ? 'Đã đưa ra lời khuyên.' : 'Chưa đưa ra lời khuyên.' }
       ],
       taskBreakdown: {
         taskAchievement: ta,
-        taskAchievementComment: 'Đánh giá mức độ hoàn thành nhiệm vụ và dung lượng từ.',
+        taskAchievementComment: words < 70 ? 'Bài viết quá ngắn, không đủ cơ sở triển khai ý.' : 'Hoàn thành tốt nội dung và yêu cầu đề bài.',
         organization: oc,
-        organizationComment: 'Bố cục email chuẩn mực.',
-        grammar: 5.5,
-        grammarComment: 'Độ chính xác ngữ pháp tốt.',
-        vocabulary: 5.5,
-        vocabularyComment: 'Vốn từ vựng tương đối phong phú.',
+        organizationComment: 'Bố cục email theo chuẩn cấu trúc thư thân mật.',
+        grammar: gr,
+        grammarComment: 'Độ chính xác về cấu trúc câu và thì.',
+        vocabulary: voc,
+        vocabularyComment: 'Sử dụng từ vựng phù hợp với chủ đề E-learning.',
         total: totalWriting,
-        analysis: `Bài viết đạt ${words} từ. Bố cục mạch lạc và rõ ràng.`
+        analysis: `Bài viết đạt ${words} từ.`
       },
-      strengths: [`Dung lượng bài viết chuẩn mực (${words} từ).`, 'Bố cục email rõ ràng, văn phong phù hợp.'],
-      areasForImprovement: ['Cần chú ý lỗi chia thì và mạo từ.', 'Nên sử dụng thêm từ nối học thuật.'],
+      strengths: words >= 110 ? [`Dung lượng chuẩn mực (${words} từ).`, 'Bố cục đầy đủ các ý chính của đề bài.'] : ['Có ý thức trả lời đề bài.'],
+      areasForImprovement: words < 110 ? ['Cần viết dài hơn để đạt mức tối thiểu 120 từ.'] : ['Trau chuốt thêm các từ nối học thuật.'],
       
       suggestedCorrections: sentences.length >= 2 ? [
         {
           original: sentences[0],
-          suggestion: `${sentences[0]} (Gợi ý nâng cấp: Có thể dùng cấu trúc mở đầu tự nhiên hơn như "Dear Alex, Hope you're doing well!").`,
-          reason: 'Cải thiện văn phong mở đầu thư thân mật.'
+          suggestion: `${sentences[0]} (Gợi ý: Mở đầu tự nhiên hơn với "Dear Alex, Hope you're doing well!").`,
+          reason: 'Cải thiện văn phong mở đầu thư.'
         },
         {
           original: firstBodySentence,
-          suggestion: `${firstBodySentence} (Gợi ý nâng cấp: Bổ sung thêm các liên từ như "Furthermore" hoặc "In addition" để tăng độ liên kết).`,
-          reason: 'Tối ưu hóa độ mạch lạc (Coherence) trong thân bài.'
+          suggestion: `${firstBodySentence} (Gợi ý nâng cấp: Thêm từ nối "Furthermore" hoặc "In addition" để tăng điểm Coherence).`,
+          reason: 'Tối ưu hóa độ mạch lạc.'
         }
       ] : [
         {
           original: trimmed || 'No content provided',
-          suggestion: 'Online learning offers great flexibility and convenience for busy learners.',
-          reason: 'Nâng cấp từ vựng học thuật VSTEP.'
+          suggestion: 'Online learning offers great flexibility and convenience.',
+          reason: 'Nâng cấp từ vựng.'
         }
       ],
 
       cefrLevel: totalWriting >= 23 ? 'B1+ / B2' : 'B1',
-      overallComment: `Chúc mừng bạn ${student || ''}! Bạn đã hoàn thành bài test với tư duy viết rất tốt.`
+      overallComment: `Chào bạn ${student || ''}! Bài viết đạt ${words} từ với số điểm Writing là ${totalWriting}/30.`
     };
   };
 
   const handleFinalSubmit = async () => {
+    setSavedWriting(writingEmail);
     setCurrentStep('analyzing');
+    
     const { totalObjective } = calculateObjectiveScore();
     const dynamicFB = generateDynamicFeedback(writingEmail, fullName);
 
@@ -519,22 +540,22 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* 🌟 1. HIỆN TOÀN BỘ BÀI VIẾT NGUYÊN VĂN CỦA THÍ SINH TRƯỚC */}
+              {/* 1. HIỆN TOÀN BỘ BÀI VIẾT NGUYÊN VĂN CỦA THÍ SINH TRƯỚC */}
               <div className="bg-white rounded-2xl border p-6 space-y-3 shadow-sm border-blue-200">
                 <div className="flex justify-between items-center border-b pb-3 border-blue-100">
                   <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
                     <Edit3 className="h-4 w-4 text-blue-600" /> Toàn bộ bài viết của thí sinh:
                   </h3>
                   <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                    Số lượng: {countWords(writingEmail)} từ
+                    Số lượng: {countWords(savedWriting)} từ
                   </span>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-mono min-h-[90px]">
-                  {writingEmail.trim() ? writingEmail : <span className="text-slate-400 italic">(Thí sinh chưa nhập nội dung bài viết)</span>}
+                  {savedWriting.trim() ? savedWriting : <span className="text-slate-400 italic">(Thí sinh chưa nhập nội dung bài viết)</span>}
                 </div>
               </div>
 
-              {/* 🌟 2. SAU ĐÓ MỚI TỚI BẢNG FEEDBACK SỬA LỖI TRỰC TIẾP */}
+              {/* 2. BẢNG FEEDBACK SỬA LỖI TRỰC TIẾP */}
               <div className="bg-white rounded-2xl border p-6 space-y-4 shadow-sm">
                 <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-blue-600" /> Feedback & Sửa lỗi trực tiếp bài viết:
