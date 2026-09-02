@@ -71,7 +71,7 @@ const mockReadingPassage2: Question[] = [
 ];
 
 export default function PlacementTestPage() {
-  const [currentStep, setCurrentStep] = useState<'start' | 'test' | 'analyzing' | 'result'>('start');
+  const [currentStep, setCurrentStep] = useState<'start' | 'listening' | 'grammar' | 'reading' | 'writing' | 'analyzing' | 'result'>('start');
   const [answers, setAnswers] = useState<Record<number, number>>({});
 
   const [showModal, setShowModal] = useState(false);
@@ -84,7 +84,7 @@ export default function PlacementTestPage() {
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
   useEffect(() => {
-    if (currentStep !== 'test') return;
+    if (currentStep === 'start' || currentStep === 'analyzing' || currentStep === 'result') return;
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -137,14 +137,13 @@ export default function PlacementTestPage() {
     }
     setShowModal(false);
     setTimeLeft(3600);
-    setCurrentStep('test');
+    setCurrentStep('listening');
   };
 
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
     const words = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
     
-    // Tự động tách các câu từ bài viết của học viên để bóc lỗi chính xác
     const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(s => s.length > 5);
     const firstBodySentence = sentences.length > 1 ? sentences[1] : (sentences[0] || trimmed || 'I think online learning is great.');
 
@@ -188,7 +187,6 @@ export default function PlacementTestPage() {
       strengths: [`Dung lượng bài viết chuẩn mực (${words} từ).`, 'Bố cục email rõ ràng, văn phong phù hợp.'],
       areasForImprovement: ['Cần chú ý lỗi chia thì và mạo từ.', 'Nên sử dụng thêm từ nối học thuật.'],
       
-      // 🌟 TỰ ĐỘNG BÓC TÁCH NHIỀU CÂU THỰC TẾ CỦA HỌC VIÊN ĐỂ GỢI Ý SỬA LỖI
       suggestedCorrections: sentences.length >= 2 ? [
         {
           original: sentences[0],
@@ -245,10 +243,10 @@ export default function PlacementTestPage() {
   };
 
   const getCoursePlacement = (totalScore: number) => {
-    if (totalScore >= 80) return { title: '④ VSTEP B2 INTENSIVE (3 THÁNG)', badgeBg: 'bg-purple-100 text-purple-700 border-purple-300' };
-    if (totalScore >= 65) return { title: '③ VSTEP B2 FOUNDATION (4 THÁNG)', badgeBg: 'bg-blue-100 text-blue-700 border-blue-300' };
-    if (totalScore >= 45) return { title: '② VSTEP B1 INTENSIVE (3 THÁNG)', badgeBg: 'bg-emerald-100 text-emerald-700 border-emerald-300' };
-    return { title: '① VSTEP B1 FOUNDATION (4 THÁNG)', badgeBg: 'bg-amber-100 text-amber-800 border-amber-300' };
+    if (totalScore >= 80) return { title: '④ VSTEP B2 INTENSIVE (3 THÁNG)', desc: 'Học viên có nền tảng xuất sắc, đủ điều kiện luyện thi B2 tăng tốc.', badgeBg: 'bg-purple-100 text-purple-700 border-purple-300' };
+    if (totalScore >= 65) return { title: '③ VSTEP B2 FOUNDATION (4 THÁNG)', desc: 'Học viên đạt tương đương B1, cần củng cố thêm kỹ năng trước khi thi B2.', badgeBg: 'bg-blue-100 text-blue-700 border-blue-300' };
+    if (totalScore >= 45) return { title: '② VSTEP B1 INTENSIVE (3 THÁNG)', desc: 'Học viên có nền tảng khá, phù hợp lớp B1 tăng tốc.', badgeBg: 'bg-emerald-100 text-emerald-700 border-emerald-300' };
+    return { title: '① VSTEP B1 FOUNDATION (4 THÁNG)', desc: 'Học viên bị hổng kiến thức hoặc nền tảng chưa vững. Cần học lộ trình Foundation củng cố lại toàn diện.', badgeBg: 'bg-amber-100 text-amber-800 border-amber-300' };
   };
 
   return (
@@ -259,7 +257,7 @@ export default function PlacementTestPage() {
             <BookOpen className="h-6 w-6 text-blue-600" />
             <span className="tracking-tight text-slate-900">VSTEP<span className="text-blue-600">MASTER</span></span>
           </Link>
-          {currentStep === 'test' && (
+          {currentStep !== 'start' && currentStep !== 'analyzing' && currentStep !== 'result' && (
             <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-mono text-sm font-bold border ${timeLeft < 300 ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse' : 'bg-slate-100 text-slate-700 border-slate-200'}`}>
               <Clock className="h-4 w-4" />
               <span>{formatTime(timeLeft)}</span>
@@ -270,13 +268,29 @@ export default function PlacementTestPage() {
       </header>
 
       <div className="container mx-auto max-w-3xl px-4 pt-8">
+        {/* MÀN HÌNH BẮT ĐẦU */}
         {currentStep === 'start' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
-            <Award className="h-12 w-12 text-blue-600 mx-auto mb-3" />
+            <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Award className="h-8 w-8" />
+            </div>
             <h1 className="text-2xl font-bold text-slate-900">VSTEP B1–B2–C1 PLACEMENT TEST</h1>
-            <p className="text-slate-600 mt-2 text-sm">Toàn bộ 40 câu hỏi hiện liên tục một lượt, học viên làm tự do.</p>
-            <button onClick={() => setShowModal(true)} className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-md transition">
-              Bắt Đầu Làm Bài <ArrowRight className="inline h-5 w-5 ml-1" />
+            <p className="text-slate-600 mt-2 max-w-lg mx-auto text-sm leading-relaxed">
+              English Proficiency Screening Test (Thời lượng: 60 phút - Thang điểm: 100)
+            </p>
+
+            <div className="my-6 text-left bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs space-y-2">
+              <h4 className="font-bold uppercase tracking-wider text-slate-700 mb-2">📋 CẤU TRÚC 4 PHẦN THI ĐÁNH GIÁ NĂNG LỰC:</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="bg-white p-2.5 rounded-lg border">🎧 <b>Section 1: Listening (Câu 1 - 8)</b> – 8 câu audio ngắn (20đ)</div>
+                <div className="bg-white p-2.5 rounded-lg border">📚 <b>Section 2: Grammar & Vocab (Câu 9 - 28)</b> – 20 câu trắc nghiệm</div>
+                <div className="bg-white p-2.5 rounded-lg border">📖 <b>Section 3: Reading (Câu 29 - 40)</b> – 2 bài đọc hiểu chuyên sâu</div>
+                <div className="bg-white p-2.5 rounded-lg border">✍️ <b>Section 4: Writing Email</b> – Viết thư cho Alex (30đ)</div>
+              </div>
+            </div>
+
+            <button onClick={() => setShowModal(true)} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-md transition-all inline-flex items-center justify-center gap-2">
+              Bắt Đầu Làm Bài <ArrowRight className="h-5 w-5" />
             </button>
           </div>
         )}
@@ -285,147 +299,185 @@ export default function PlacementTestPage() {
           <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
               <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-400 font-bold p-2">✕</button>
-              <h2 className="text-xl font-black text-slate-900 mb-4 text-center">THÔNG TIN HỌC VIÊN</h2>
+              <div className="text-center mb-6">
+                <User className="h-10 w-10 text-blue-600 mx-auto mb-2" />
+                <h2 className="text-xl font-black text-slate-900">THÔNG TIN HỌC VIÊN</h2>
+                <p className="text-xs text-slate-500 mt-1">Vui lòng điền thông tin để xem kết quả đánh giá và lời khuyên lộ trình học!</p>
+              </div>
               <form onSubmit={handleStartQuiz} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Họ và Tên *</label>
-                  <input type="text" required placeholder="Nguyễn Văn A" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-blue-600" />
+                  <input type="text" required placeholder="Nguyễn Văn A" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium focus:ring-2 focus:ring-blue-600 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Số điện thoại *</label>
-                  <input type="tel" required placeholder="0912345678" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border text-sm outline-none focus:ring-2 focus:ring-blue-600" />
+                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Số điện thoại / Zalo *</label>
+                  <input type="tel" required placeholder="0912345678" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium focus:ring-2 focus:ring-blue-600 outline-none" />
                 </div>
-                <button type="submit" className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700">🚀 Bắt Đầu Làm Bài</button>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-600 mb-1">Mục tiêu VSTEP</label>
+                  <select value={targetGoal} onChange={(e) => setTargetGoal(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium bg-white">
+                    <option value="B1">Mục tiêu B1</option>
+                    <option value="B2">Mục tiêu B2</option>
+                    <option value="C1">Mục tiêu C1</option>
+                  </select>
+                </div>
+                <button type="submit" className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition">🚀 Bắt Đầu Làm Bài</button>
               </form>
             </div>
           </div>
         )}
 
-        {/* HIỂN THỊ LIÊN TỤC 40 CÂU */}
-        {currentStep === 'test' && (
-          <div className="space-y-8">
+        {/* STEP 1: LISTENING */}
+        {currentStep === 'listening' && (
+          <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
+            <span className="font-extrabold text-indigo-700 text-xs uppercase bg-indigo-50 px-3 py-1 rounded border border-indigo-200">🎧 Section 1: Listening (Câu 1 - 8)</span>
             
-            {/* SECTION 1: LISTENING */}
-            <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
-              <span className="font-extrabold text-indigo-700 text-xs uppercase bg-indigo-50 px-3 py-1 rounded border border-indigo-200">🎧 Section 1: Listening (Câu 1 - 8)</span>
-              
-              <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl sticky top-20 z-40 backdrop-blur-md">
-                <div className="text-xs font-bold text-indigo-900 mb-2 flex items-center gap-1"><Volume2 className="h-4 w-4" /> AUDIO NGHE:</div>
-                <audio controls className="w-full rounded-lg">
-                  <source src="/listening.mp3" type="audio/mpeg" />
-                </audio>
-              </div>
-
-              <div className="space-y-6">
-                {mockListeningQuestions.map((q) => (
-                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
-                    <h3 className="font-bold text-sm text-slate-900">{q.question}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {q.options.map((opt, idx) => (
-                        <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-indigo-600 bg-indigo-50 font-bold text-indigo-950' : 'bg-white text-slate-700'}`}>
-                          <span>{opt}</span>
-                          {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-indigo-600" />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl sticky top-20 z-40 backdrop-blur-md">
+              <div className="text-xs font-bold text-indigo-900 mb-2 flex items-center gap-1"><Volume2 className="h-4 w-4" /> AUDIO NGHE:</div>
+              <audio controls className="w-full rounded-lg">
+                <source src="/listening.mp3" type="audio/mpeg" />
+              </audio>
             </div>
 
-            {/* SECTION 2: GRAMMAR & VOCABULARY */}
-            <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
-              <span className="font-extrabold text-blue-900 text-xs uppercase bg-blue-50 px-3 py-1 rounded border border-blue-200">📚 Section 2: Grammar & Vocab (Câu 9 - 28)</span>
-              <div className="space-y-6">
-                {mockGrammarVocabQuestions.map((q) => (
-                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
-                    <h3 className="font-bold text-sm text-slate-900">{q.question}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {q.options.map((opt, idx) => (
-                        <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-blue-600 bg-blue-50 font-bold text-blue-900' : 'bg-white text-slate-700'}`}>
-                          <span>{opt}</span>
-                          {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-blue-600" />}
-                        </button>
-                      ))}
-                    </div>
+            <div className="space-y-6">
+              {mockListeningQuestions.map((q) => (
+                <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
+                  <h3 className="font-bold text-sm text-slate-900">{q.question}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {q.options.map((opt, idx) => (
+                      <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-indigo-600 bg-indigo-50 font-bold text-indigo-950' : 'bg-white text-slate-700'}`}>
+                        <span>{opt}</span>
+                        {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-indigo-600" />}
+                      </button>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
 
-            {/* SECTION 3: READING */}
-            <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
-              <span className="font-extrabold text-emerald-900 text-xs uppercase bg-emerald-50 px-3 py-1 rounded border border-emerald-200">📖 Section 3: Reading (Câu 29 - 40)</span>
-              
-              <div className="p-4 bg-slate-50 rounded-xl border text-xs leading-relaxed space-y-2">
-                <b className="text-emerald-900">Passage 1: Cycling in Cities</b>
-                <p>In many large cities, cycling is becoming an increasingly popular way to travel. Some people choose bicycles because they want to avoid traffic jams, while others use them as a way to exercise. Cycling can also be cheaper than driving because cyclists do not have to pay for fuel or expensive parking.</p>
-                <p>However, cycling in a busy city is not always easy. Heavy traffic can make cyclists feel unsafe, and some cities do not have enough bicycle lanes. Bad weather can also discourage people from cycling regularly.</p>
-                <p>To encourage more people to travel by bicycle, many local governments are building new cycle lanes and providing bicycle-sharing services. Supporters believe that if more people leave their cars at home, cities could become cleaner, quieter and healthier places to live.</p>
-              </div>
-
-              <div className="space-y-4">
-                {mockReadingPassage1.map((q) => (
-                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
-                    <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {q.options.map((opt, idx) => (
-                        <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-950' : 'bg-white text-slate-700'}`}>
-                          <span>{opt}</span>
-                          {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-emerald-600" />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4 bg-slate-50 rounded-xl border text-xs leading-relaxed space-y-2 mt-6">
-                <b className="text-emerald-900">Passage 2: The Changing Workplace</b>
-                <p>Technology has significantly changed the way people work. In the past, most employees were expected to travel to an office every day. Today, however, advances in communication technology have made remote and hybrid working possible for millions of workers.</p>
-                <p>Working from home offers several advantages. Employees can save time and money by avoiding daily travel, and many report having greater control over their schedules. Companies may also benefit because they can reduce the amount of office space they need.</p>
-                <p>Nevertheless, remote working presents challenges. Some employees find it difficult to separate their professional and personal lives. Others may feel isolated because they have fewer opportunities for face-to-face interaction with colleagues. Communication can also become more complicated when team members depend heavily on emails and online meetings.</p>
-                <p>For this reason, many organisations are adopting hybrid working arrangements rather than abandoning offices completely. This approach allows employees to work remotely on certain days while still meeting colleagues in person. Although no single system is suitable for every organisation, the changing workplace suggests that flexibility is likely to remain an important feature of employment.</p>
-              </div>
-
-              <div className="space-y-4">
-                {mockReadingPassage2.map((q) => (
-                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
-                    <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {q.options.map((opt, idx) => (
-                        <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-950' : 'bg-white text-slate-700'}`}>
-                          <span>{opt}</span>
-                          {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-emerald-600" />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SECTION 4: WRITING */}
-            <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
-              <span className="font-extrabold text-purple-900 text-xs uppercase bg-purple-50 px-3 py-1 rounded border border-purple-200">✍️ Section 4: Writing Email</span>
-              <div className="bg-slate-50 p-4 rounded-xl border text-xs space-y-1.5">
-                <p className="font-semibold">Your English-speaking friend, Alex, is considering learning English online and has asked for your opinion.</p>
-                <p><b>Write an email to Alex (120–150 words):</b></p>
-                <ul className="list-disc pl-5">
-                  <li>Say whether you think online learning is a good choice;</li>
-                  <li>Explain advantages or disadvantages;</li>
-                  <li>Give advice on how to learn effectively.</li>
-                </ul>
-              </div>
-
-              <textarea rows={8} className="w-full p-4 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600" placeholder="Dear Alex..." value={writingEmail} onChange={(e) => setWritingEmail(e.target.value)} />
-              <div className="text-right text-xs text-slate-500 font-bold">Số từ: {countWords(writingEmail)} từ</div>
-
-              <button onClick={handleFinalSubmit} className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition">
-                ✨ Nộp Bài & Nhận Kết Quả AI
+            <div className="flex justify-end pt-4 border-t">
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('grammar'); }} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                Sang Section 2: Grammar & Vocab <ArrowRight className="h-4 w-4" />
               </button>
             </div>
+          </div>
+        )}
 
+        {/* STEP 2: GRAMMAR & VOCABULARY */}
+        {currentStep === 'grammar' && (
+          <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
+            <span className="font-extrabold text-blue-900 text-xs uppercase bg-blue-50 px-3 py-1 rounded border border-blue-200">📚 Section 2: Grammar & Vocab (Câu 9 - 28)</span>
+            
+            <div className="space-y-6">
+              {mockGrammarVocabQuestions.map((q) => (
+                <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
+                  <h3 className="font-bold text-sm text-slate-900">{q.question}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {q.options.map((opt, idx) => (
+                      <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-blue-600 bg-blue-50 font-bold text-blue-900' : 'bg-white text-slate-700'}`}>
+                        <span>{opt}</span>
+                        {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-blue-600" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between pt-4 border-t">
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('listening'); }} className="text-sm font-semibold text-slate-500">Quay lại Listening</button>
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('reading'); }} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                Sang Section 3: Reading <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: READING */}
+        {currentStep === 'reading' && (
+          <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
+            <span className="font-extrabold text-emerald-900 text-xs uppercase bg-emerald-50 px-3 py-1 rounded border border-emerald-200">📖 Section 3: Reading (Câu 29 - 40)</span>
+            
+            <div className="p-4 bg-slate-50 rounded-xl border text-xs leading-relaxed space-y-2">
+              <b className="text-emerald-900">Passage 1: Cycling in Cities</b>
+              <p>In many large cities, cycling is becoming an increasingly popular way to travel. Some people choose bicycles because they want to avoid traffic jams, while others use them as a way to exercise. Cycling can also be cheaper than driving because cyclists do not have to pay for fuel or expensive parking.</p>
+              <p>However, cycling in a busy city is not always easy. Heavy traffic can make cyclists feel unsafe, and some cities do not have enough bicycle lanes. Bad weather can also discourage people from cycling regularly.</p>
+              <p>To encourage more people to travel by bicycle, many local governments are building new cycle lanes and providing bicycle-sharing services. Supporters believe that if more people leave their cars at home, cities could become cleaner, quieter and healthier places to live.</p>
+            </div>
+
+            <div className="space-y-4">
+              {mockReadingPassage1.map((q) => (
+                <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {q.options.map((opt, idx) => (
+                      <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-950' : 'bg-white text-slate-700'}`}>
+                        <span>{opt}</span>
+                        {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-emerald-600" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-xl border text-xs leading-relaxed space-y-2 mt-6">
+              <b className="text-emerald-900">Passage 2: The Changing Workplace</b>
+              <p>Technology has significantly changed the way people work. In the past, most employees were expected to travel to an office every day. Today, however, advances in communication technology have made remote and hybrid working possible for millions of workers.</p>
+              <p>Working from home offers several advantages. Employees can save time and money by avoiding daily travel, and many report having greater control over their schedules. Companies may also benefit because they can reduce the amount of office space they need.</p>
+              <p>Nevertheless, remote working presents challenges. Some employees find it difficult to separate their professional and personal lives. Others may feel isolated because they have fewer opportunities for face-to-face interaction with colleagues. Communication can also become more complicated when team members depend heavily on emails and online meetings.</p>
+              <p>For this reason, many organisations are adopting hybrid working arrangements rather than abandoning offices completely. This approach allows employees to work remotely on certain days while still meeting colleagues in person. Although no single system is suitable for every organisation, the changing workplace suggests that flexibility is likely to remain an important feature of employment.</p>
+            </div>
+
+            <div className="space-y-4">
+              {mockReadingPassage2.map((q) => (
+                <div key={q.id} className="p-4 bg-slate-50 rounded-xl border space-y-2">
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {q.options.map((opt, idx) => (
+                      <button key={idx} onClick={() => handleSelectOption(q.id, idx)} className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex justify-between ${answers[q.id] === idx ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-950' : 'bg-white text-slate-700'}`}>
+                        <span>{opt}</span>
+                        {answers[q.id] === idx && <CheckCircle className="h-4 w-4 text-emerald-600" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between pt-4 border-t">
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('grammar'); }} className="text-sm font-semibold text-slate-500">Quay lại Grammar</button>
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('writing'); }} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                Sang Section 4: Writing <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: WRITING */}
+        {currentStep === 'writing' && (
+          <div className="bg-white rounded-2xl border p-6 space-y-6 shadow-sm">
+            <span className="font-extrabold text-purple-900 text-xs uppercase bg-purple-50 px-3 py-1 rounded border border-purple-200">✍️ Section 4: Writing Email</span>
+            
+            <div className="bg-slate-50 p-4 rounded-xl border text-xs space-y-1.5">
+              <p className="font-semibold">Your English-speaking friend, Alex, is considering learning English online and has asked for your opinion.</p>
+              <p><b>Write an email to Alex (120–150 words):</b></p>
+              <ul className="list-disc pl-5">
+                <li>Say whether you think online learning is a good choice;</li>
+                <li>Explain advantages or disadvantages;</li>
+                <li>Give advice on how to learn effectively.</li>
+              </ul>
+            </div>
+
+            <textarea rows={8} className="w-full p-4 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600" placeholder="Dear Alex..." value={writingEmail} onChange={(e) => setWritingEmail(e.target.value)} />
+            <div className="text-right text-xs text-slate-500 font-bold">Số từ: {countWords(writingEmail)} từ</div>
+
+            <div className="flex justify-between pt-4 border-t">
+              <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('reading'); }} className="text-sm font-semibold text-slate-500">Quay lại Reading</button>
+              <button onClick={handleFinalSubmit} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg">
+                <Sparkles className="h-4 w-4" /> Nộp Bài & Nhận Kết Quả AI
+              </button>
+            </div>
           </div>
         )}
 
@@ -433,7 +485,7 @@ export default function PlacementTestPage() {
         {currentStep === 'analyzing' && (
           <div className="bg-white rounded-2xl border p-12 text-center shadow-sm space-y-4">
             <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
-            <h2 className="text-2xl font-extrabold text-slate-900">🤖 AI đang phân tích bài thi...</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900">🤖 AI đang phân tích toàn bộ bài thi...</h2>
           </div>
         )}
 
@@ -442,21 +494,33 @@ export default function PlacementTestPage() {
           const { listeningScore, gvrScore, listeningCount, gvrCount, totalObjective } = calculateObjectiveScore();
           const tb = aiFeedback?.taskBreakdown || { taskAchievement: 6.5, organization: 6.0, grammar: 6.0, vocabulary: 5.5, total: 24.0 };
           const totalScore = Number((totalObjective + tb.total).toFixed(1));
+          const placement = getCoursePlacement(totalScore);
 
           return (
             <div className="space-y-8">
               <div className="bg-white rounded-2xl border p-8 shadow-sm text-center">
                 <Award className="h-12 w-12 text-emerald-600 mx-auto mb-2" />
                 <h1 className="text-2xl font-bold text-slate-900">Kết Quả VSTEP Placement Test</h1>
-                <div className="text-5xl font-black text-blue-600 my-3">{totalScore} <span className="text-lg text-slate-400 font-normal">/ 100 điểm</span></div>
-                <div className="p-4 bg-slate-50 rounded-xl border max-w-sm mx-auto text-xs space-y-1">
-                  <p>🎧 Listening: <b>{listeningScore}/20đ</b></p>
-                  <p>📚 GVR: <b>{gvrScore}/50đ</b></p>
-                  <p>✍️ Writing: <b>{tb.total}/30đ</b></p>
+                <p className="text-sm text-slate-500 mt-1">Học viên: <b className="text-blue-600">{fullName}</b> ({phone})</p>
+
+                <div className="my-6 p-6 bg-slate-50 rounded-2xl border max-w-xl mx-auto">
+                  <div className="text-xs uppercase font-bold text-slate-400">Tổng Điểm Đánh Giá (Thang 100)</div>
+                  <div className="text-5xl font-black text-blue-600 my-1">{totalScore} <span className="text-lg text-slate-400 font-normal">/ 100 điểm</span></div>
+                  
+                  <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t text-xs">
+                    <div className="bg-white p-2.5 rounded-lg border">🎧 Listening: <br /><b className="text-indigo-600 text-sm">{listeningScore}/20đ</b></div>
+                    <div className="bg-white p-2.5 rounded-lg border">📚 GVR: <br /><b className="text-blue-600 text-sm">{gvrScore}/50đ</b></div>
+                    <div className="bg-white p-2.5 rounded-lg border">✍️ Writing: <br /><b className="text-emerald-600 text-sm">{tb.total}/30đ</b></div>
+                  </div>
+                </div>
+
+                <div className={`p-6 rounded-2xl border text-left max-w-xl mx-auto ${placement.badgeBg}`}>
+                  <h3 className="font-bold text-lg mb-1">{placement.title}</h3>
+                  <p className="text-xs leading-relaxed">{placement.desc}</p>
                 </div>
               </div>
 
-              {/* BẢNG HIỂN THỊ CÁC CÂU SỬA LỖI THỰC TẾ */}
+              {/* BẢNG SỬA LỖI WRITING THỰC TẾ */}
               <div className="bg-white rounded-2xl border p-6 space-y-4 shadow-sm">
                 <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-blue-600" /> Sửa lỗi trực tiếp bài viết của học viên:
@@ -477,6 +541,63 @@ export default function PlacementTestPage() {
                   ))}
                 </div>
               </div>
+
+              {/* GIẢI THÍCH CHI TIẾT ĐÁP ÁN TỪNG CÂU CHO TẤT CẢ CÁC PHẦN */}
+              <div className="bg-white rounded-2xl border p-6 sm:p-8 shadow-sm space-y-8">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <Headphones className="h-5 w-5 text-indigo-600" /> Giải Thích Chi Tiết 8 Câu Listening
+                  </h3>
+                  <div className="space-y-4">
+                    {mockListeningQuestions.map((q) => {
+                      const isCorrect = answers[q.id] === q.correct;
+                      return (
+                        <div key={q.id} className={`p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'}`}>
+                          <div className="flex justify-between items-start gap-2 mb-2">
+                            <span className="font-bold text-slate-900">{q.question}</span>
+                            <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${isCorrect ? 'text-emerald-600 bg-emerald-100' : 'text-rose-600 bg-rose-100'}`}>
+                              {isCorrect ? 'Đúng (+2.5đ)' : 'Sai (0đ)'}
+                            </span>
+                          </div>
+                          {q.audioScript && (
+                            <div className="text-xs text-slate-700 bg-white/90 p-3 rounded-lg border border-slate-200 mb-2 font-mono">
+                              🎧 <b>Audio Script:</b> "{q.audioScript}"
+                            </div>
+                          )}
+                          <div className="text-xs text-slate-600 bg-white/70 p-2.5 rounded-lg border">
+                            💡 <b>Giải thích:</b> {q.explanation}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-blue-600" /> Giải Thích Chi Tiết Grammar, Vocab & Reading (Câu 9 - 40)
+                  </h3>
+                  <div className="space-y-4">
+                    {mockGrammarVocabQuestions.concat(mockReadingPassage1, mockReadingPassage2).map((q) => {
+                      const isCorrect = answers[q.id] === q.correct;
+                      return (
+                        <div key={q.id} className={`p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'}`}>
+                          <div className="flex justify-between items-start gap-2 mb-2">
+                            <span className="font-bold text-slate-900">{q.question}</span>
+                            <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${isCorrect ? 'text-emerald-600 bg-emerald-100' : 'text-rose-600 bg-rose-100'}`}>
+                              {isCorrect ? 'Đúng' : 'Sai'}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 mt-2">
+                            💡 <b>Giải thích:</b> {q.explanation}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
             </div>
           );
         })()}
