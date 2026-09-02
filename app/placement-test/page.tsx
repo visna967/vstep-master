@@ -81,10 +81,8 @@ export default function PlacementTestPage() {
 
   const [timeLeft, setTimeLeft] = useState(3600);
   
-  // ✅ Đã chèn sẵn bài mẫu 130 từ vào đây để test nhanh không cần gõ
-  const [writingEmail, setWritingEmail] = useState(
-    `Dear Alex,\n\nHow’s it going? I’m glad to hear that you’re considering learning English online. In my opinion, it is a good choice, especially if you have a busy schedule.\n\nOne major advantage of online learning is flexibility. You can study anytime and anywhere without spending time travelling to class. In addition, there are plenty of useful online resources that can help you improve your English. However, learning online can sometimes be distracting, and you may have fewer opportunities for face-to-face communication.\n\nI suggest setting a regular study schedule and practising English every day. You should also combine different activities, such as watching English videos, reading short articles, and speaking with other learners. Most importantly, try to use English as much as possible.\n\nI hope my advice helps!\n\nBest wishes,`
-  );
+  // ✅ Ô viết thư để trống hoàn toàn để học viên tự viết
+  const [writingEmail, setWritingEmail] = useState('');
   
   const [savedWriting, setSavedWriting] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
@@ -175,7 +173,7 @@ export default function PlacementTestPage() {
       suggestedCorrections: [
         {
           original: firstSentence,
-          suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể mở đầu tự nhiên hơn với "Dear Alex, Hope everything is going well!").`,
+          suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể mở đầu tự nhiên hơn như "Dear Alex, Hope everything is going well!").`,
           reason: 'Cải thiện văn phong mở đầu thư thân mật.'
         }
       ],
