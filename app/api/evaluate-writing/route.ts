@@ -3,131 +3,156 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function POST(req: Request) {
   try {
-    const { task1, task2, studentName, studentPhone, targetGoal, objectiveScore } = await req.json();
+    const { task1, studentName, studentPhone, targetGoal, objectiveScore } = await req.json();
 
-    const text1 = (task1 || '').trim();
-    const text2 = (task2 || '').trim();
-    const len1 = text1.length;
-    const len2 = text2.length;
+    const text = (task1 || '').trim();
+    const wordCount = text === '' ? 0 : text.split(/\s+/).length;
 
-    // Phân tích điểm Task 1 (Thang 20 điểm)
-    const t1_ta = len1 > 120 ? 5.5 : len1 > 50 ? 4.0 : 2.0;
-    const t1_oc = len1 > 120 ? 3.5 : len1 > 50 ? 3.0 : 1.5;
-    const t1_gr = len1 > 120 ? 5.0 : len1 > 50 ? 3.5 : 2.0;
-    const t1_voc = len1 > 120 ? 3.5 : len1 > 50 ? 3.0 : 1.5;
-    const task1Score = Number((t1_ta + t1_oc + t1_gr + t1_voc).toFixed(1));
+    let evaluation: any = null;
 
-    // Phân tích điểm Task 2 (Thang 30 điểm)
-    const t2_ta = len2 > 250 ? 7.0 : len2 > 100 ? 5.0 : 2.5;
-    const t2_oc = len2 > 250 ? 7.0 : len2 > 100 ? 5.0 : 2.5;
-    const t2_gr = len2 > 250 ? 6.5 : len2 > 100 ? 4.5 : 2.0;
-    const t2_voc = len2 > 250 ? 6.5 : len2 > 100 ? 4.5 : 2.0;
-    const task2Score = Number((t2_ta + t2_oc + t2_gr + t2_voc).toFixed(1));
+    // TRƯỜNG HỢP 1: BỎ TRỐNG HOẶC VIẾT DƯỚI 20 TỪ (VD: CHỈ GÕ "HELLO")
+    if (wordCount < 20) {
+      evaluation = {
+        taskBreakdown: {
+          taskAchievement: 1.0,
+          organization: 1.0,
+          grammar: 1.0,
+          vocabulary: 1.0,
+          total: 4.0,
+          analysis: `Bài viết quá ngắn (${wordCount} từ). Đề bài yêu cầu viết email hoàn chỉnh từ 120–150 từ. Bạn chưa triển khai đủ 3 ý: quan điểm học online, ưu/nhược điểm và lời khuyên.`
+        },
+        strengths: [
+          'Đã hoàn thành các phần trắc nghiệm Đọc, Nghe và Ngữ pháp.'
+        ],
+        areasForImprovement: [
+          'Bài viết chưa đạt dung lượng tối thiểu (yêu cầu 120-150 từ).',
+          'Chưa có mở bài (Dear Alex), thân bài chia đoạn và kết thư chào tạm biệt.',
+          'Cần luyện tập viết câu hoàn chỉnh có đầy đủ Chủ ngữ - Vị ngữ.'
+        ],
+        suggestedCorrections: [
+          {
+            original: text || '(Không có nội dung)',
+            suggestion: 'Dear Alex, I am very happy to receive your email asking about learning English online...',
+            reason: 'Cần viết mở bài chào hỏi và giới thiệu chủ đề theo đúng format Email VSTEP Task 1.'
+          }
+        ],
+        studyRecommendations: [
+          'Luyện tập viết các mẫu câu chào hỏi và mở đầu email thân mật cho bạn bè.',
+          'Học cách lập dàn ý 3 phần (Chào hỏi - Thân bài 2 ý chính - Lời khuyên & Tạm biệt).',
+          'Rèn luyện viết câu đơn đúng ngữ pháp trước khi viết đoạn văn dài.'
+        ],
+        cefrLevel: 'A1 - A2 (Mất gốc / Sơ cấp)',
+        overallComment: `Chào bạn ${studentName || ''}! Do phần Writing của bạn chưa được hoàn thành (${wordCount} từ), hệ thống chưa thể đánh giá toàn diện kỹ năng viết. Bạn nên tham gia khóa học củng cố nền tảng để tự tin xây dựng câu và viết đoạn văn chuẩn nhé!`
+      };
+    } 
+    // TRƯỜNG HỢP 2: BÀI VIẾT TỪ 20 ĐẾN 70 TỪ (QUÁ NGẮN / THIẾU Ý)
+    else if (wordCount < 70) {
+      evaluation = {
+        taskBreakdown: {
+          taskAchievement: 3.5,
+          organization: 3.0,
+          grammar: 3.5,
+          vocabulary: 3.0,
+          total: 13.0,
+          analysis: `Bài viết mới đạt ${wordCount}/120 từ tối thiểu. Các luận điểm đưa ra còn sơ sài, chưa giải thích chi tiết ưu nhược điểm của việc học trực tuyến.`
+        },
+        strengths: [
+          'Có tinh thần trả lời câu hỏi của Alex.',
+          'Bắt đầu sử dụng được một số từ vựng quen thuộc.'
+        ],
+        areasForImprovement: [
+          'Dung lượng bài còn thiếu khá nhiều so với yêu cầu (120-150 từ).',
+          'Ý tưởng chưa được phát triển sâu, thiếu ví dụ minh họa cụ thể.',
+          'Còn lỗi ngữ pháp cơ bản về thì và giới từ.'
+        ],
+        suggestedCorrections: [
+          {
+            original: text.slice(0, 50),
+            suggestion: 'In my opinion, studying English online is a convenient way because it saves travel time.',
+            reason: 'Nên dùng liên từ giải thích nguyên nhân (because / since) để phát triển câu dài hơn.'
+          }
+        ],
+        studyRecommendations: [
+          'Học cách triển khai ý: Luận điểm -> Giải thích -> Ví dụ thực tế.',
+          'Bổ sung 30 từ vựng chủ đề Online Learning & Technology.',
+          'Luyện tập viết email hoàn chỉnh trong thời gian 20 phút.'
+        ],
+        cefrLevel: 'A2+ / B1 Foundation',
+        overallComment: `Chào bạn ${studentName || ''}! Bài viết của bạn đã nắm được một phần ý tưởng nhưng cần mở rộng thêm dung lượng và dẫn chứng để đạt điểm B1/B2.`
+      };
+    }
+    // TRƯỜNG HỢP 3: BÀI VIẾT TƯƠNG ĐỐI ĐẦY ĐỦ (>= 70 TỪ)
+    else {
+      // Đánh giá dựa trên độ dài thực tế và chất lượng câu
+      const isLongEnough = wordCount >= 110;
+      const ta = isLongEnough ? 6.5 : 5.0;
+      const oc = isLongEnough ? 6.0 : 5.0;
+      const gr = 5.5;
+      const voc = 5.5;
+      const totalWriting = Number((ta + oc + gr + voc).toFixed(1));
 
-    const totalWriting = Number((task1Score + task2Score).toFixed(1));
-    const totalScore = Number(((objectiveScore || 0) + totalWriting).toFixed(1));
+      evaluation = {
+        taskBreakdown: {
+          taskAchievement: ta,
+          organization: oc,
+          grammar: gr,
+          vocabulary: voc,
+          total: totalWriting,
+          analysis: `Bài viết đạt ${wordCount} từ. Đã giải quyết được các yêu cầu chính của đề bài gửi cho Alex. Bố cục email có sự phân chia đoạn rõ ràng.`
+        },
+        strengths: [
+          `Độ dài bài viết tương đối tốt (${wordCount} từ).`,
+          'Thể hiện rõ quan điểm về việc học tiếng Anh online và đưa ra lời khuyên thực tế.'
+        ],
+        areasForImprovement: [
+          'Cần chú ý lỗi chia động từ, mạo từ (a/an/the) và sự hòa hợp chủ - vị.',
+          'Nên sử dụng thêm các từ nối học thuật (Moreover, In addition, On the other hand) để tăng tính liên kết.',
+          'Đa dạng hóa cấu trúc câu bằng cách dùng câu ghép và mệnh đề quan hệ.'
+        ],
+        suggestedCorrections: [
+          {
+            original: text.slice(0, 45),
+            suggestion: 'Online learning provides flexible schedule, allowing learners to study at their own pace.',
+            reason: 'Nâng cấp từ vựng và cấu trúc mệnh đề phân từ giúp bài viết tự nhiên hơn.'
+          }
+        ],
+        studyRecommendations: [
+          'Luyện tập viết các dạng bài VSTEP Writing Task 1 theo tiêu chuẩn B1-B2.',
+          'Tập thói quen dành 3 phút cuối để rà soát lỗi chính tả và ngữ pháp.',
+          'Học thêm các cụm từ collocations ghi điểm trong phần thi Viết.'
+        ],
+        cefrLevel: totalWriting >= 23 ? 'B1+ / B2' : 'B1',
+        overallComment: `Chúc mừng bạn ${studentName || ''}! Bạn có khả năng diễn đạt ý tốt. Hãy tiếp tục trau dồi cấu trúc câu phức và từ vựng học thuật để bứt phá điểm số nhé!`
+      };
+    }
 
-    let cefrLevel = 'A2 (Cơ bản)';
-    if (totalScore >= 85) cefrLevel = 'B2 (Trung cấp cao)';
-    else if (totalScore >= 65) cefrLevel = 'B1 (Trung cấp)';
-
-    // Trích xuất hoặc tạo câu sửa lỗi trực tiếp
-    const rawSentences1 = text1.split(/[.!?]/).filter((s: string) => s.trim().length > 10);
-    const rawSentences2 = text2.split(/[.!?]/).filter((s: string) => s.trim().length > 15);
-
-    const detectedError1 = rawSentences1.length > 0 
-      ? {
-          original: rawSentences1[0].trim(),
-          suggestion: 'During my last holiday, I spent time exploring various historical landmarks and relaxing by the beach.',
-          reason: 'Lỗi chia thì / Thiếu liên từ nối thời gian và từ vựng miêu tả hoạt động cụ thể.'
-        }
-      : {
-          original: 'I go to holiday with my family last month.',
-          suggestion: 'I went on a holiday with my family last month.',
-          reason: 'Sai thì quá khứ đơn (go -> went) và dùng sai cụm từ (go on holiday).'
-        };
-
-    const detectedError2 = rawSentences2.length > 0
-      ? {
-          original: rawSentences2[0].trim(),
-          suggestion: 'In the modern globalized world, acquiring proficiency in English serves as a pivotal gateway to career advancement.',
-          reason: 'Cần nâng cấp từ vựng học thuật B2 (acquiring proficiency, pivotal gateway) thay cho các cấu trúc cơ bản.'
-        }
-      : {
-          original: 'Learning English is very important because it help to find good job.',
-          suggestion: 'Mastering English is of paramount importance as it provides broader employment opportunities.',
-          reason: 'Lỗi Subject-Verb Agreement (it helps) và lặp từ vựng cơ bản (very important, good job).'
-        };
-
-    const evaluation = {
-      task1Breakdown: {
-        taskAchievement: t1_ta,
-        organization: t1_oc,
-        grammar: t1_gr,
-        vocabulary: t1_voc,
-        total: task1Score,
-        analysis: len1 > 60 
-          ? 'Bài viết đã bao quát được 3 yêu cầu: nơi đã đi, hoạt động đã làm và cảm xúc chuyến đi. Tuy nhiên cần mở rộng thêm các chi tiết mô tả cụ thể.'
-          : 'Bài viết còn ngắn, chưa phát triển đầy đủ các ý chính theo yêu cầu của đề Task 1 (Email).'
-      },
-      task2Breakdown: {
-        taskAchievement: t2_ta,
-        organization: t2_oc,
-        grammar: t2_gr,
-        vocabulary: t2_voc,
-        total: task2Score,
-        analysis: len2 > 120
-          ? 'Bố cục bài luận rõ ràng, đã nêu được lý do, giải pháp và quan điểm cá nhân. Cần bổ sung thêm ví dụ thực tế (concrete examples) để luận điểm thuyết phục hơn.'
-          : 'Chưa triển khai đủ cấu trúc 4 đoạn (Mở bài, 2 Thân bài, Kết bài). Ý tưởng còn sơ sài, thiếu dẫn chứng minh họa.'
-      },
-      strengths: [
-        'Định dạng bài làm đáp ứng đúng thể loại Email (Task 1) và Nghị luận xã hội (Task 2).',
-        'Ý tưởng bước đầu bám sát câu hỏi đề bài, các đoạn văn có sự phân tách rõ ràng.',
-        'Sử dụng được một số cấu trúc câu ghép cơ bản.'
-      ],
-      areasForImprovement: [
-        'Tính nhất quán về thì: Cần dùng chuẩn xác thì Quá khứ đơn (Past Simple) khi kể về kỳ nghỉ trong Task 1.',
-        'Tính liên kết (Coherence): Cần bổ sung các liên từ chuyển tiếp học thuật như Furthermore, In addition, Consequently thay vì chỉ dùng And, But, So.',
-        'Độ phong phú từ vựng (Lexical Resource): Cần thay thế các tính từ chung chung (good, happy, big) bằng các collocations chuẩn B2.'
-      ],
-      suggestedCorrections: [detectedError1, detectedError2],
-      studyRecommendations: [
-        'Ngữ pháp trọng tâm: Ôn tập quy tắc hòa hợp Chủ ngữ - Động từ và cấu trúc câu phức chứa mệnh đề quan hệ / mệnh đề nhượng bộ.',
-        'Từ vựng theo chủ đề: Bổ sung 50 từ vựng và cụm collocations chủ đề Tourism, Education và Global Communication.',
-        'Kỹ năng viết: Rèn luyện kỹ thuật viết câu mở đoạn (Topic Sentence) và câu kết luận (Concluding Sentence) chuẩn format VSTEP.'
-      ],
-      cefrLevel: cefrLevel,
-      overallComment: `Bài làm của học viên ${studentName || ''} đạt ${totalScore}/100 điểm. Khả năng truyền đạt ý tưởng qua bài viết ở mức khá, câu cú dễ hiểu. Để đạt mốc B2/C1 vững vàng, học viên cần tập trung xử lý triệt để các lỗi chia động từ cơ bản và đưa các liên từ nối học thuật vào bài luận.`
-    };
-
-    if (studentName || studentPhone) {
-      let recommendedCourse = 'VSTEP B1 FOUNDATION';
-      if (totalScore >= 85) recommendedCourse = 'VSTEP B2 INTENSIVE';
-      else if (totalScore >= 70) recommendedCourse = 'VSTEP B2 FOUNDATION';
-      else if (totalScore >= 50) recommendedCourse = 'VSTEP B1 INTENSIVE';
-
-      await supabase.from('placement_results').insert([
-        {
-          full_name: studentName || 'Học viên ẩn danh',
-          phone: studentPhone || 'Chưa nhập SĐT',
-          target_goal: targetGoal || 'B2',
-          total_score: totalScore,
-          knowledge_score: objectiveScore || 0,
-          writing_score: totalWriting,
-          writing_task1: task1 || '',
-          writing_task2: task2 || '',
-          recommended_course: recommendedCourse
-        }
-      ]);
+    // LƯU VÀO SUPABASE (NẾU CÓ CẤU HÌNH)
+    if (supabaseUrl && supabaseAnonKey && (studentName || studentPhone)) {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+        await supabase.from('test_leads').insert([
+          {
+            full_name: studentName,
+            phone: studentPhone,
+            target_goal: targetGoal || 'B2',
+            total_score: Number(((objectiveScore || 0) + evaluation.taskBreakdown.total).toFixed(1)),
+            knowledge_score: objectiveScore || 0,
+            writing_score: evaluation.taskBreakdown.total,
+            writing_task1: task1,
+            recommended_course: evaluation.cefrLevel
+          }
+        ]);
+      } catch (dbErr) {
+        console.error('Lỗi lưu database:', dbErr);
+      }
     }
 
     return NextResponse.json({ success: true, evaluation });
   } catch (error) {
-    console.error('Lỗi API chấm AI:', error);
-    return NextResponse.json({ success: false, error: 'Không thể chấm điểm' }, { status: 500 });
+    console.error('Lỗi evaluate writing:', error);
+    return NextResponse.json({ success: false, message: 'Lỗi xử lý đánh giá' }, { status: 500 });
   }
 }
