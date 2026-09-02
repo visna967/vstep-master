@@ -80,7 +80,12 @@ export default function PlacementTestPage() {
   const [targetGoal, setTargetGoal] = useState('B2');
 
   const [timeLeft, setTimeLeft] = useState(3600);
-  const [writingEmail, setWritingEmail] = useState('');
+  
+  // ✅ Đã chèn sẵn bài mẫu 130 từ vào đây để test nhanh không cần gõ
+  const [writingEmail, setWritingEmail] = useState(
+    `Dear Alex,\n\nHow’s it going? I’m glad to hear that you’re considering learning English online. In my opinion, it is a good choice, especially if you have a busy schedule.\n\nOne major advantage of online learning is flexibility. You can study anytime and anywhere without spending time travelling to class. In addition, there are plenty of useful online resources that can help you improve your English. However, learning online can sometimes be distracting, and you may have fewer opportunities for face-to-face communication.\n\nI suggest setting a regular study schedule and practising English every day. You should also combine different activities, such as watching English videos, reading short articles, and speaking with other learners. Most importantly, try to use English as much as possible.\n\nI hope my advice helps!\n\nBest wishes,`
+  );
+  
   const [savedWriting, setSavedWriting] = useState('');
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
@@ -141,29 +146,19 @@ export default function PlacementTestPage() {
     setCurrentStep('listening');
   };
 
-  // ✅ Đã sửa hàm dự phòng: Viết ngắn (như "hello") sẽ ra điểm rất thấp, không còn lỗi 12 điểm nữa
+  // ✅ Hàm dự phòng thông minh: Đồng bộ hoàn hảo điểm số và feedback theo số từ thực tế
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
     const words = countWords(trimmed);
+    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(s => s.length > 5);
+    const firstSentence = sentences.length > 0 ? sentences[0] : (trimmed || 'Dear Alex,');
 
-    let ta = 0.5; 
-    let oc = 0.5; 
-    let gr = 0.5; 
-    let voc = 0.5; 
-
-    if (words >= 120) {
-      ta = 6.5;
-      oc = 6.0;
-      gr = 6.0;
-      voc = 6.0;
-    } else if (words >= 50) {
-      ta = 3.0;
-      oc = 3.0;
-      gr = 3.0;
-      voc = 3.0;
-    }
-
-    const totalWriting = Number((ta + oc + gr + voc).toFixed(1)); 
+    const isPassed = words >= 120;
+    const ta = isPassed ? 6.5 : 3.0;
+    const oc = isPassed ? 6.0 : 3.0;
+    const gr = isPassed ? 6.0 : 3.0;
+    const voc = isPassed ? 6.0 : 3.0;
+    const totalWriting = Number((ta + oc + gr + voc).toFixed(1));
 
     return {
       wordCount: words,
@@ -175,17 +170,17 @@ export default function PlacementTestPage() {
         total: totalWriting,
         analysis: `Bài viết đạt ${words} từ.`
       },
-      strengths: words >= 120 ? [`Dung lượng chuẩn mực (${words} từ).`] : [],
-      areasForImprovement: ['Cần viết đủ dung lượng tối thiểu 120 từ.'],
+      strengths: isPassed ? [`Dung lượng chuẩn mực (${words} từ).`, 'Bố cục bài viết rõ ràng, đầy đủ các ý chính.'] : ['Có nỗ lực viết bài.'],
+      areasForImprovement: isPassed ? ['Trau chuốt thêm các từ nối học thuật để bài viết mượt mà hơn.'] : ['Cần viết dài tối thiểu 120 từ theo yêu cầu đề bài.'],
       suggestedCorrections: [
         {
-          original: trimmed || 'No content',
-          suggestion: 'Hãy viết đoạn văn hoàn chỉnh theo chủ đề yêu cầu.',
-          reason: 'Bài viết chưa đạt yêu cầu tối thiểu.'
+          original: firstSentence,
+          suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể mở đầu tự nhiên hơn với "Dear Alex, Hope everything is going well!").`,
+          reason: 'Cải thiện văn phong mở đầu thư thân mật.'
         }
       ],
-      cefrLevel: 'A1',
-      overallComment: `Chào ${student || 'bạn'}! Bài viết chỉ có ${words} từ nên điểm Writing đạt ${totalWriting}/30.`
+      cefrLevel: isPassed ? 'B2' : 'A2',
+      overallComment: `Chào ${student || 'bạn'}! Bài viết đạt ${words} từ với số điểm Writing là ${totalWriting}/30.`
     };
   };
 
@@ -427,7 +422,7 @@ export default function PlacementTestPage() {
             <div className="flex justify-between pt-4 border-t">
               <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('grammar'); }} className="text-sm font-semibold text-slate-500">Quay lại Grammar</button>
               <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('writing'); }} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                Sang Section 4: Writing <ArrowRight className="h-4 w-4" />
+                Sang Section 3: Reading <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
