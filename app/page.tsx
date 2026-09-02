@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   BookOpen, CheckCircle, Clock, ArrowRight, Award, FileText, 
   AlertTriangle, Sparkles, Loader2, CheckCircle2, XCircle, User, 
-  Phone, BarChart2, MessageSquare, Volume2, Headphones, CheckSquare, XSquare
+  Phone, BarChart2, MessageSquare, Volume2, Headphones, CheckSquare, Edit3
 } from 'lucide-react';
 
 interface Question {
@@ -669,7 +669,22 @@ export default function PlacementTestPage() {
                   </span>
                 </div>
 
-                {/* 1. ĐÁNH GIÁ ĐỘ DÀI & SỐ TỪ */}
+                {/* 1. KHUNG HIỂN THỊ BÀI VIẾT NGUYÊN VĂN CỦA HỌC VIÊN */}
+                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                      <Edit3 className="h-4 w-4 text-blue-600" /> Bài viết nguyên văn của bạn:
+                    </h4>
+                    <span className="text-[11px] font-bold text-slate-500 bg-white px-2.5 py-0.5 rounded-full border">
+                      Số lượng: {countWords(writingEmail)} từ
+                    </span>
+                  </div>
+                  <div className="p-4 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-mono min-h-[80px]">
+                    {writingEmail.trim() ? writingEmail : <span className="text-slate-400 italic">(Học viên chưa nhập nội dung bài viết)</span>}
+                  </div>
+                </div>
+
+                {/* 2. ĐÁNH GIÁ ĐỘ DÀI & SỐ TỪ */}
                 <div className={`p-4 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2 ${aiFeedback?.wordStatus?.color || 'bg-slate-50 border-slate-200'}`}>
                   <div>
                     <span className="font-bold block text-sm mb-0.5">📊 Kiểm tra dung lượng bài viết:</span>
@@ -680,7 +695,7 @@ export default function PlacementTestPage() {
                   </span>
                 </div>
 
-                {/* 2. CHECKLIST HOÀN THÀNH 3 YÊU CẦU ĐỀ BÀI (TASK FULFILLMENT) */}
+                {/* 3. CHECKLIST HOÀN THÀNH 3 YÊU CẦU ĐỀ BÀI (TASK FULFILLMENT) */}
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                     <CheckSquare className="h-4 w-4 text-blue-600" /> Trạng thái hoàn thành 3 yêu cầu đề bài (Task Fulfillment):
@@ -710,7 +725,7 @@ export default function PlacementTestPage() {
                   </div>
                 </div>
 
-                {/* 3. CHI TIẾT 4 TIÊU CHÍ VSTEP (MỖI TIÊU CHÍ 7.5 ĐIỂM) */}
+                {/* 4. CHI TIẾT 4 TIÊU CHÍ VSTEP (MỖI TIÊU CHÍ 7.5 ĐIỂM) */}
                 <div className="space-y-3">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700">
                     🎯 Chi tiết điểm 4 tiêu chí chấm thi VSTEP:
@@ -750,7 +765,7 @@ export default function PlacementTestPage() {
                   </div>
                 </div>
 
-                {/* 4. SỬA LỖI & GỢI Ý CÂU VIẾT CHUẨN */}
+                {/* 5. SỬA LỖI & GỢI Ý CÂU VIẾT CHUẨN */}
                 {aiFeedback?.suggestedCorrections && aiFeedback.suggestedCorrections.length > 0 && (
                   <div>
                     <h4 className="font-bold text-sm text-slate-800 uppercase mb-2 flex items-center gap-1.5"><MessageSquare className="h-4 w-4 text-blue-600" /> Sửa lỗi trực tiếp câu của học viên:</h4>
@@ -772,7 +787,7 @@ export default function PlacementTestPage() {
                   </div>
                 )}
 
-                {/* 5. ĐIỂM MẠNH & LỖI CẦN KHẮC PHỤC */}
+                {/* 6. ĐIỂM MẠNH & LỖI CẦN KHẮC PHỤC */}
                 {aiFeedback?.strengths && (
                   <div>
                     <h4 className="font-bold text-sm text-emerald-800 uppercase mb-2 flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4" /> Điểm mạnh ghi nhận</h4>
