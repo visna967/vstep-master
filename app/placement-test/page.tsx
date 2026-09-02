@@ -141,92 +141,51 @@ export default function PlacementTestPage() {
     setCurrentStep('listening');
   };
 
+  // ✅ Đã sửa hàm dự phòng: Viết ngắn (như "hello") sẽ ra điểm rất thấp, không còn lỗi 12 điểm nữa
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
     const words = countWords(trimmed);
-    const lower = trimmed.toLowerCase();
 
-    const hasOpinion = lower.includes('think') || lower.includes('opinion') || lower.includes('choice') || lower.includes('good') || lower.includes('believe');
-    const hasProsCons = lower.includes('advantage') || lower.includes('disadvantage') || lower.includes('benefit') || lower.includes('flexib') || lower.includes('distract') || lower.includes('convenient');
-    const hasAdvice = lower.includes('suggest') || lower.includes('advice') || lower.includes('should') || lower.includes('recommend');
+    let ta = 0.5; 
+    let oc = 0.5; 
+    let gr = 0.5; 
+    let voc = 0.5; 
 
-    let ta = 2.0; 
-    let oc = 2.0; 
-    let gr = 2.0; 
-    let voc = 2.0; 
-
-    if (words < 50) {
-      ta = 3.0; oc = 3.0; gr = 3.5; voc = 3.0; 
-    } else if (words < 110) {
-      ta = 5.0; oc = 5.0; gr = 5.0; voc = 5.0; 
-    } else {
-      ta = hasOpinion && hasProsCons && hasAdvice ? 7.0 : 6.0;
-      oc = 6.5;
+    if (words >= 120) {
+      ta = 6.5;
+      oc = 6.0;
       gr = 6.0;
       voc = 6.0;
+    } else if (words >= 50) {
+      ta = 3.0;
+      oc = 3.0;
+      gr = 3.0;
+      voc = 3.0;
     }
 
     const totalWriting = Number((ta + oc + gr + voc).toFixed(1)); 
 
-    let wordStatus = {
-      label: 'Đạt chuẩn dung lượng (120 - 150 từ)',
-      color: 'text-emerald-700 bg-emerald-50 border-emerald-300',
-      badge: 'ĐẠT YÊU CẦU'
-    };
-
-    if (words < 70) {
-      wordStatus = { label: `Chưa đạt: Thiếu từ (${words}/120 từ)`, color: 'text-rose-700 bg-rose-50 border-rose-300', badge: 'CHƯA ĐẠT' };
-    } else if (words < 110) {
-      wordStatus.label = `Tương đối đạt (${words}/120 từ)`;
-    }
-
-    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(s => s.length > 5);
-    const firstBodySentence = sentences.length > 1 ? sentences[1] : (sentences[0] || trimmed || 'I think online learning is great.');
-
     return {
       wordCount: words,
-      wordStatus,
-      taskRequirements: [
-        { req: 'Nêu quan điểm về việc học tiếng Anh online', passed: hasOpinion, comment: hasOpinion ? 'Đã nêu rõ quan điểm.' : 'Chưa rõ quan điểm.' },
-        { req: 'Phân tích ưu điểm / nhược điểm', passed: hasProsCons, comment: hasProsCons ? 'Đã phân tích ưu/nhược điểm.' : 'Thiếu phân tích chi tiết.' },
-        { req: 'Đưa ra lời khuyên học hiệu quả', passed: hasAdvice, comment: hasAdvice ? 'Đã đưa ra lời khuyên.' : 'Chưa đưa ra lời khuyên.' }
-      ],
       taskBreakdown: {
         taskAchievement: ta,
-        taskAchievementComment: words < 70 ? 'Bài viết quá ngắn, không đủ cơ sở triển khai ý.' : 'Hoàn thành tốt nội dung và yêu cầu đề bài.',
         organization: oc,
-        organizationComment: 'Bố cục email theo chuẩn cấu trúc thư thân mật.',
         grammar: gr,
-        grammarComment: 'Độ chính xác về cấu trúc câu và thì.',
         vocabulary: voc,
-        vocabularyComment: 'Sử dụng từ vựng phù hợp với chủ đề E-learning.',
         total: totalWriting,
         analysis: `Bài viết đạt ${words} từ.`
       },
-      strengths: words >= 110 ? [`Dung lượng chuẩn mực (${words} từ).`, 'Bố cục đầy đủ các ý chính của đề bài.'] : ['Có ý thức trả lời đề bài.'],
-      areasForImprovement: words < 110 ? ['Cần viết dài hơn để đạt mức tối thiểu 120 từ.'] : ['Trau chuốt thêm các từ nối học thuật.'],
-      
-      suggestedCorrections: sentences.length >= 2 ? [
+      strengths: words >= 120 ? [`Dung lượng chuẩn mực (${words} từ).`] : [],
+      areasForImprovement: ['Cần viết đủ dung lượng tối thiểu 120 từ.'],
+      suggestedCorrections: [
         {
-          original: sentences[0],
-          suggestion: `${sentences[0]} (Gợi ý: Mở đầu tự nhiên hơn với "Dear Alex, Hope you're doing well!").`,
-          reason: 'Cải thiện văn phong mở đầu thư.'
-        },
-        {
-          original: firstBodySentence,
-          suggestion: `${firstBodySentence} (Gợi ý nâng cấp: Thêm từ nối "Furthermore" hoặc "In addition" để tăng điểm Coherence).`,
-          reason: 'Tối ưu hóa độ mạch lạc.'
-        }
-      ] : [
-        {
-          original: trimmed || 'No content provided',
-          suggestion: 'Online learning offers great flexibility and convenience.',
-          reason: 'Nâng cấp từ vựng.'
+          original: trimmed || 'No content',
+          suggestion: 'Hãy viết đoạn văn hoàn chỉnh theo chủ đề yêu cầu.',
+          reason: 'Bài viết chưa đạt yêu cầu tối thiểu.'
         }
       ],
-
-      cefrLevel: totalWriting >= 23 ? 'B1+ / B2' : 'B1',
-      overallComment: `Chào bạn ${student || ''}! Bài viết đạt ${words} từ với số điểm Writing là ${totalWriting}/30.`
+      cefrLevel: 'A1',
+      overallComment: `Chào ${student || 'bạn'}! Bài viết chỉ có ${words} từ nên điểm Writing đạt ${totalWriting}/30.`
     };
   };
 
