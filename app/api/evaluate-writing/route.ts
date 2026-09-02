@@ -11,18 +11,10 @@ export async function POST(req: Request) {
     const text = (task1 || '').trim();
     const wordCount = text === '' ? 0 : text.split(/\s+/).length;
 
-    // 🌟 THUẬT TOÁN MỚI: Tự động tách các câu trong bài viết
-    const sentences = text.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 0);
-    
-    // Tìm câu trong thân bài (bỏ qua câu chào hỏi ngắn đầu thư như Dear Alex, How's it going?)
-    let targetSentence = "Online learning offers great flexibility and convenience.";
-    for (const s of sentences) {
-      const lower = s.toLowerCase();
-      if (!lower.includes('dear') && !lower.includes("how's it going") && !lower.includes('glad to hear') && s.split(/\s+/).length > 5) {
-        targetSentence = s;
-        break;
-      }
-    }
+    // 🌟 Cắt tách các câu thực tế từ bài viết của học viên
+    const sentences = text.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 5);
+    const firstSentence = sentences.length > 0 ? sentences[0] : (text || 'Dear Alex, I am writing to share my opinion.');
+    const secondSentence = sentences.length > 1 ? sentences[1] : 'Online learning offers great flexibility.';
 
     let evaluation: any = null;
 
@@ -36,7 +28,7 @@ export async function POST(req: Request) {
         areasForImprovement: ['Chưa đạt dung lượng yêu cầu (120-150 từ).'],
         suggestedCorrections: [
           {
-            original: targetSentence,
+            original: firstSentence,
             suggestion: 'Dear Alex, I am very glad to receive your email regarding online learning.',
             reason: 'Cần mở đầu thư trang trọng và đúng chủ đề hơn.'
           }
@@ -68,12 +60,17 @@ export async function POST(req: Request) {
         strengths: [`Dung lượng chuẩn mực (${wordCount} từ).`, 'Bố cục email đầy đủ các ý theo yêu cầu của đề.'],
         areasForImprovement: ['Cần chú ý trau chuốt thêm từ vựng học thuật để đạt band điểm cao hơn.'],
         
-        // 🌟 HIỂN THỊ ĐÚNG CÂU TRONG THÂN BÀI ĐỂ GỢI Ý NÂNG CẤP
+        // 🌟 TRẢ VỀ NHIỀU CÂU GỐC THỰC TẾ CỦA HỌC VIÊN
         suggestedCorrections: [
           {
-            original: targetSentence,
-            suggestion: `${targetSentence} (Gợi ý nâng cấp: Có thể sử dụng các cấu trúc câu phức hoặc các cụm collocations học thuật như "offers a multitude of benefits" để tăng điểm Lexical Resource).`,
-            reason: 'Tối ưu hóa cách diễn đạt giúp câu văn mang màu sắc học thuật (Academic) hơn.'
+            original: firstSentence,
+            suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể dùng cấu trúc mở đầu tự nhiên hơn như "Dear Alex, Hope you're doing well!").`,
+            reason: 'Cải thiện văn phong mở đầu thư thân mật.'
+          },
+          {
+            original: secondSentence,
+            suggestion: `${secondSentence} (Gợi ý nâng cấp: Bổ sung thêm các từ nối học thuật như "Furthermore" hoặc "In addition" để tăng độ liên kết).`,
+            reason: 'Tối ưu hóa độ mạch lạc (Coherence) trong thân bài.'
           }
         ],
         
