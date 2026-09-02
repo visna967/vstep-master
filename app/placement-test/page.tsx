@@ -268,7 +268,6 @@ export default function PlacementTestPage() {
       </header>
 
       <div className="container mx-auto max-w-3xl px-4 pt-8">
-        {/* MÀN HÌNH BẮT ĐẦU */}
         {currentStep === 'start' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
             <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -520,10 +519,25 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* BẢNG SỬA LỖI WRITING THỰC TẾ */}
+              {/* 🌟 1. HIỆN TOÀN BỘ BÀI VIẾT NGUYÊN VĂN CỦA THÍ SINH TRƯỚC */}
+              <div className="bg-white rounded-2xl border p-6 space-y-3 shadow-sm border-blue-200">
+                <div className="flex justify-between items-center border-b pb-3 border-blue-100">
+                  <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
+                    <Edit3 className="h-4 w-4 text-blue-600" /> Toàn bộ bài viết của thí sinh:
+                  </h3>
+                  <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                    Số lượng: {countWords(writingEmail)} từ
+                  </span>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-mono min-h-[90px]">
+                  {writingEmail.trim() ? writingEmail : <span className="text-slate-400 italic">(Thí sinh chưa nhập nội dung bài viết)</span>}
+                </div>
+              </div>
+
+              {/* 🌟 2. SAU ĐÓ MỚI TỚI BẢNG FEEDBACK SỬA LỖI TRỰC TIẾP */}
               <div className="bg-white rounded-2xl border p-6 space-y-4 shadow-sm">
                 <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-blue-600" /> Sửa lỗi trực tiếp bài viết của học viên:
+                  <MessageSquare className="h-4 w-4 text-blue-600" /> Feedback & Sửa lỗi trực tiếp bài viết:
                 </h3>
                 <div className="space-y-3">
                   {aiFeedback?.suggestedCorrections?.map((err: any, i: number) => (
@@ -542,7 +556,7 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* GIẢI THÍCH CHI TIẾT ĐÁP ÁN TỪNG CÂU CHO TẤT CẢ CÁC PHẦN */}
+              {/* 3. GIẢI THÍCH CHI TIẾT ĐÁP ÁN TỪNG CÂU CHO CÁC PHẦN TRẮC NGHIỆM */}
               <div className="bg-white rounded-2xl border p-6 sm:p-8 shadow-sm space-y-8">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
