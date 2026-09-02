@@ -11,66 +11,38 @@ export async function POST(req: Request) {
     const text = (task1 || '').trim();
     const wordCount = text === '' ? 0 : text.split(/\s+/).length;
 
+    // 🌟 THUẬT TOÁN MỚI: Tự động tách các câu trong bài viết
+    const sentences = text.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 0);
+    
+    // Tìm câu trong thân bài (bỏ qua câu chào hỏi ngắn đầu thư như Dear Alex, How's it going?)
+    let targetSentence = "Online learning offers great flexibility and convenience.";
+    for (const s of sentences) {
+      const lower = s.toLowerCase();
+      if (!lower.includes('dear') && !lower.includes("how's it going") && !lower.includes('glad to hear') && s.split(/\s+/).length > 5) {
+        targetSentence = s;
+        break;
+      }
+    }
+
     let evaluation: any = null;
 
     if (wordCount < 20) {
       evaluation = {
         taskBreakdown: {
-          taskAchievement: 1.0,
-          organization: 1.0,
-          grammar: 1.0,
-          vocabulary: 1.0,
-          total: 4.0,
-          analysis: `Bài viết quá ngắn (${wordCount} từ). Đề bài yêu cầu viết email từ 120–150 từ cho Alex. Bạn chưa viết đủ nội dung tối thiểu.`
+          taskAchievement: 1.0, organization: 1.0, grammar: 1.0, vocabulary: 1.0, total: 4.0,
+          analysis: `Bài viết quá ngắn (${wordCount} từ).`
         },
-        strengths: ['Đã hoàn thành các phần trắc nghiệm.'],
-        areasForImprovement: [
-          'Chưa đạt dung lượng yêu cầu (120-150 từ).',
-          'Chưa có mở bài (Dear Alex), thân bài và kết thư.',
-          'Cần luyện tập viết câu hoàn chỉnh.'
-        ],
+        strengths: ['Đã hoàn thành phần trắc nghiệm.'],
+        areasForImprovement: ['Chưa đạt dung lượng yêu cầu (120-150 từ).'],
         suggestedCorrections: [
           {
-            original: text || '(Bỏ trống)',
-            suggestion: 'Dear Alex, It is great to hear from you. Regarding your question about learning English online...',
-            reason: 'Cần viết câu chào hỏi mở đầu email theo chuẩn VSTEP Task 1.'
+            original: targetSentence,
+            suggestion: 'Dear Alex, I am very glad to receive your email regarding online learning.',
+            reason: 'Cần mở đầu thư trang trọng và đúng chủ đề hơn.'
           }
         ],
-        studyRecommendations: [
-          'Ôn tập cấu trúc câu đơn và câu ghép cơ bản.',
-          'Nắm vững cấu trúc email 3 phần (Opening - Body - Closing).'
-        ],
-        cefrLevel: 'A1 / A2 (Cần củng cố nền tảng)',
-        overallComment: `Chào bạn ${studentName || ''}! Do phần Writing chưa hoàn thành (${wordCount} từ), điểm kỹ năng Viết đạt 4.0/30. Bạn nên tham gia khóa học Foundation để củng cố lại toàn diện nhé!`
-      };
-    } else if (wordCount < 70) {
-      evaluation = {
-        taskBreakdown: {
-          taskAchievement: 3.5,
-          organization: 3.0,
-          grammar: 3.5,
-          vocabulary: 3.0,
-          total: 13.0,
-          analysis: `Bài viết mới đạt ${wordCount}/120 từ. Các ý chưa được giải thích sâu và thiếu ví dụ cụ thể.`
-        },
-        strengths: ['Đã bước đầu trả lời được yêu cầu đề bài.'],
-        areasForImprovement: [
-          'Dung lượng bài còn thiếu so với chuẩn 120-150 từ.',
-          'Cần bổ sung thêm liên từ chỉ nguyên nhân và kết quả.'
-        ],
-        suggestedCorrections: [
-          {
-            original: text.slice(0, 50),
-            suggestion: 'In my opinion, studying English online is extremely convenient because it saves travel time.',
-            reason: 'Nên dùng liên từ để mở rộng câu và tăng tính mạch lạc.'
-          }
-        ],
-        studyRecommendations: [
-          'Học cách phát triển luận điểm: Ý chính -> Giải thích -> Ví dụ.',
-          'Bổ sung 30 từ vựng chủ đề E-learning.'
-        ],
-        cefrLevel: 'A2+ / B1 Foundation',
-        overallComment: `Chào bạn ${studentName || ''}! Bài viết đã có ý tưởng ban đầu, cần bổ sung thêm dung lượng để đạt thang điểm B1/B2.`
+        cefrLevel: 'A1 / A2',
+        overallComment: `Chào ${studentName || 'bạn'}! Bài viết quá ngắn nên điểm Writing bị hạn chế.`
       };
     } else {
       const isLongEnough = wordCount >= 110;
@@ -83,33 +55,30 @@ export async function POST(req: Request) {
       evaluation = {
         taskBreakdown: {
           taskAchievement: ta,
+          taskAchievementComment: 'Đánh giá mức độ hoàn thành nhiệm vụ và dung lượng từ.',
           organization: oc,
+          organizationComment: 'Bố cục email rõ ràng, mạch lạc.',
           grammar: gr,
+          grammarComment: 'Độ chính xác về cấu trúc ngữ pháp.',
           vocabulary: voc,
+          vocabularyComment: 'Vốn từ vựng phù hợp với chủ đề.',
           total: totalWriting,
-          analysis: `Bài viết đạt ${wordCount} từ. Đã giải quyết tốt các yêu cầu đề bài gửi cho Alex.`
+          analysis: `Bài viết đạt ${wordCount} từ, đáp ứng tốt yêu cầu đề bài.`
         },
-        strengths: [
-          `Dung lượng tốt (${wordCount} từ), bố cục email rõ ràng.`,
-          'Ý tưởng tự nhiên, đúng văn phong thư từ.'
-        ],
-        areasForImprovement: [
-          'Chú ý các lỗi chia thì, mạo từ và sự hòa hợp chủ - vị.',
-          'Sử dụng thêm các liên từ học thuật (Furthermore, In addition).'
-        ],
+        strengths: [`Dung lượng chuẩn mực (${wordCount} từ).`, 'Bố cục email đầy đủ các ý theo yêu cầu của đề.'],
+        areasForImprovement: ['Cần chú ý trau chuốt thêm từ vựng học thuật để đạt band điểm cao hơn.'],
+        
+        // 🌟 HIỂN THỊ ĐÚNG CÂU TRONG THÂN BÀI ĐỂ GỢI Ý NÂNG CẤP
         suggestedCorrections: [
           {
-            original: text.slice(0, 45),
-            suggestion: 'Online learning provides high flexibility, allowing learners to study at their own pace.',
-            reason: 'Dùng mệnh đề phân từ giúp câu văn tự nhiên và đạt chuẩn B2.'
+            original: targetSentence,
+            suggestion: `${targetSentence} (Gợi ý nâng cấp: Có thể sử dụng các cấu trúc câu phức hoặc các cụm collocations học thuật như "offers a multitude of benefits" để tăng điểm Lexical Resource).`,
+            reason: 'Tối ưu hóa cách diễn đạt giúp câu văn mang màu sắc học thuật (Academic) hơn.'
           }
         ],
-        studyRecommendations: [
-          'Luyện tập viết các dạng đề VSTEP Task 1 trong 20 phút.',
-          'Học thêm các collocations theo chủ đề.'
-        ],
+        
         cefrLevel: totalWriting >= 23 ? 'B1+ / B2' : 'B1',
-        overallComment: `Chúc mừng bạn ${studentName || ''}! Bạn có khả năng diễn đạt tốt. Hãy rèn luyện thêm câu phức để nâng cao band điểm!`
+        overallComment: `Chúc mừng ${studentName || 'bạn'}! Bài viết có bố cục rất tốt, lập luận chặt chẽ và tự nhiên.`
       };
     }
 
@@ -129,13 +98,12 @@ export async function POST(req: Request) {
           }
         ]);
       } catch (dbErr) {
-        console.error('Database error:', dbErr);
+        console.error('Lỗi DB:', dbErr);
       }
     }
 
     return NextResponse.json({ success: true, evaluation });
   } catch (error) {
-    console.error('Evaluation error:', error);
-    return NextResponse.json({ success: false, message: 'Lỗi xử lý đánh giá' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Lỗi' }, { status: 500 });
   }
 }
