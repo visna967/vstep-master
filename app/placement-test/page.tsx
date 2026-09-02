@@ -444,7 +444,7 @@ export default function PlacementTestPage() {
               <button onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); setCurrentStep('reading'); }} className="text-sm font-semibold text-slate-500">Quay lại Reading</button>
               
               <div className="flex gap-2">
-                {/* Nút phụ mở ChatGPT chấm bài */}
+                {/* Nút phụ mở ChatGPT chấm bài ngay từ trang viết */}
                 <button 
                   onClick={() => {
                     if (!writingEmail.trim()) {
@@ -509,13 +509,28 @@ export default function PlacementTestPage() {
 
               {/* 1. HIỆN TOÀN BỘ BÀI VIẾT NGUYÊN VĂN CỦA THÍ SINH TRƯỚC */}
               <div className="bg-white rounded-2xl border p-6 space-y-3 shadow-sm border-blue-200">
-                <div className="flex justify-between items-center border-b pb-3 border-blue-100">
+                <div className="flex justify-between items-center border-b pb-3 border-blue-100 flex-wrap gap-2">
                   <h3 className="font-bold text-slate-900 text-sm uppercase flex items-center gap-2">
                     <Edit3 className="h-4 w-4 text-blue-600" /> Toàn bộ bài viết của thí sinh:
                   </h3>
-                  <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                    Số lượng: {countWords(savedWriting)} từ
-                  </span>
+                  
+                  <div className="flex items-center gap-2">
+                    {/* 🌟 Nút bấm mở ChatGPT chấm bài trực tiếp ngay trên trang kết quả */}
+                    <button
+                      onClick={() => {
+                        const prompt = `Bạn là giám khảo chấm thi VSTEP Writing B1-B2. Hãy chấm điểm bài viết email sau theo thang điểm 30 (Task Achievement, Organization, Grammar, Vocabulary), chỉ ra lỗi sai và gợi ý cách sửa chi tiết:\n\n---\n${savedWriting}\n---`;
+                        const url = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+                        window.open(url, '_blank');
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-sm transition"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" /> Chấm lại bằng ChatGPT
+                    </button>
+
+                    <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                      Số lượng: {countWords(savedWriting)} từ
+                    </span>
+                  </div>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-mono min-h-[90px]">
                   {savedWriting.trim() ? savedWriting : <span className="text-slate-400 italic">(Thí sinh chưa nhập nội dung bài viết)</span>}
