@@ -3,30 +3,26 @@
 import Link from 'next/link';
 import { 
   BookOpen, Award, CheckCircle, ArrowRight, Sparkles, 
-  Headphones, FileText, BrainCircuit, BarChart3, ShieldCheck, 
-  Clock, LogIn, UserPlus, Users, HelpCircle
+  Headphones, FileText, BrainCircuit, ShieldCheck, 
+  Clock, LogIn, UserPlus
 } from 'lucide-react';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* HEADER: THANH ĐIỀU HƯỚNG VỚI NÚT ĐĂNG NHẬP / ĐĂNG KÝ */}
+      {/* Header */}
       <header className="border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
-          
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-blue-600">
             <BookOpen className="h-6 w-6 text-blue-600" />
             <span className="tracking-tight text-slate-900">VSTEP<span className="text-blue-600">MASTER</span></span>
           </Link>
 
-          {/* Menu Điều Hướng Giữa */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
             <Link href="/placement-test" className="hover:text-blue-600 transition">Placement Test</Link>
             <Link href="/dashboard" className="hover:text-blue-600 transition">Thống Kê Giáo Viên</Link>
           </nav>
 
-          {/* Cụm Nút Đăng Nhập / Đăng Ký / Test */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link 
               href="/login" 
@@ -52,11 +48,10 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-
         </div>
       </header>
 
-      {/* HERO SECTION: BANNER GIỚI THIỆU CHÍNH */}
+      {/* Hero Section */}
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-blue-50/60 via-white to-slate-50">
         <div className="container mx-auto max-w-4xl text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider">
@@ -96,7 +91,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CẤU TRÚC 4 PHẦN THI */}
+      {/* Cấu Trúc 4 Phần Thi */}
       <section className="py-14 px-4 container mx-auto max-w-5xl">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Cấu Trúc Đề Thi Placement Test</h2>
@@ -146,26 +141,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* BANNER KÊU GỌI HÀNH ĐỘNG DƯỚI CÙNG */}
-      <section className="py-12 px-4 container mx-auto max-w-4xl">
-        <div className="bg-blue-600 rounded-3xl p-8 sm:p-12 text-center text-white space-y-6 shadow-xl">
-          <Award className="h-12 w-12 text-yellow-300 mx-auto" />
-          <h2 className="text-2xl sm:text-3xl font-black">Sẵn Sàng Chinh Phục Điểm Số VSTEP?</h2>
-          <p className="text-blue-100 text-sm max-w-lg mx-auto leading-relaxed">
-            Tham gia bài kiểm tra ngay hôm nay để nhận báo cáo điểm chi tiết và tư vấn lộ trình học phù hợp.
-          </p>
-          <div className="pt-2 flex flex-wrap justify-center gap-4">
-            <Link 
-              href="/placement-test" 
-              className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-blue-600 font-bold px-8 py-3.5 rounded-2xl shadow-lg transition"
-            >
-              Làm Bài Test Ngay <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
+      {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
         <p>© 2026 VSTEP MASTER. Hệ Thống Luyện Thi & Đánh Giá Năng Lực Tiếng Anh Trực Tuyến.</p>
       </footer>
