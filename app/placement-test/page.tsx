@@ -11,72 +11,72 @@ import {
 interface Question {
   id: number;
   section: 'Listening' | 'Grammar & Vocabulary' | 'Reading Passage 1' | 'Reading Passage 2';
-  partTitle: string;
   question: string;
   options: string[];
   correct: number;
   audioScript?: string;
-  keyInfo?: string;
   explanation: string;
 }
 
 // 1. SECTION 1: LISTENING (1 - 8)
 const mockListeningQuestions: Question[] = [
-  { id: 1, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '1. What time will the flight now be leaving?', options: ['A. At 6:00', 'B. At 7:00', 'C. At 7:15', 'D. At 7:50'], correct: 2, audioScript: 'The flight will now be leaving at 7:15 p.m. from gate 22A.', keyInfo: 'will now be leaving at 7:15 p.m.', explanation: 'Giờ khởi hành mới được thông báo là 7:15 p.m. -> Đáp án C.' },
-  { id: 2, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '2. How much will a $50 sweater cost now?', options: ['A. $50', 'B. $5', 'C. $15', 'D. $25'], correct: 3, audioScript: 'Every sweater will be 50% off. You can buy any child’s sweater at half the original price.', keyInfo: '50% off = half the original price ($50 / 2 = $25)', explanation: 'Áo len $50 giảm giá 50% còn $25 -> Đáp án D.' },
-  { id: 3, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '3. What number is the white line?', options: ['A. 6', 'B. 4', 'C. 7', 'D. 3'], correct: 1, audioScript: 'You can transfer to the white line, line number 4, to Seoul soccer stadium.', keyInfo: 'white line, line number 4', explanation: 'Tuyến màu trắng là tuyến số 4 -> Đáp án B.' },
-  { id: 4, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '4. What color is the dog?', options: ['A. White with brown paws', 'B. Brown with white paws', 'C. Brown with black paws', 'D. Black with brown paws'], correct: 1, audioScript: 'It is brown with white paws and answers to the name Sam.', keyInfo: 'brown with white paws', explanation: 'Chú chó màu nâu và có 4 chân trắng -> Đáp án B.' },
-  { id: 5, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '5. What difference will be seen between Monday and Tuesday?', options: ['A. Monday will be much hotter.', 'B. Tuesday will have more rain.', 'C. Temperatures will be slightly higher on Tuesday.', 'D. There will be more rain showers on Monday.'], correct: 2, audioScript: 'Tuesday will also have similar conditions with slightly higher temperatures of about 23 degrees in the north.', keyInfo: 'Tuesday -> slightly higher temperatures', explanation: 'Thứ Ba nhiệt độ sẽ cao hơn một chút -> Đáp án C.' },
-  { id: 6, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '6. Why are the students being sent home?', options: ['A. It is a school holiday.', 'B. There is a problem with the gas pipes.', 'C. Some of the teachers are absent.', 'D. The water pipes have burst.'], correct: 1, audioScript: "Due to a burst in the gas pipes as well as the extremely cold weather, today's classes will be canceled.", keyInfo: 'burst in the gas pipes', explanation: 'Học sinh được cho về nhà do sự cố vỡ ống gas -> Đáp án B.' },
-  { id: 7, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '7. What will happen in thirty minutes?', options: ['A. The plane will land.', 'B. Dinner will be served.', 'C. The plane will enter an area of bad weather.', 'D. Lunch will be served.'], correct: 3, audioScript: 'We should pass through the bad weather within thirty minutes, at which time lunch will be served.', keyInfo: 'within thirty minutes -> lunch will be served', explanation: 'Sau 30 phút nữa bữa trưa sẽ được phục vụ -> Đáp án D.' },
-  { id: 8, section: 'Listening', partTitle: 'SECTION 1: LISTENING (CÂU 1 - 8)', question: '8. What is the problem?', options: ['A. A car has a flat tire.', 'B. A car has been stolen.', 'C. A car has broken down.', 'D. A car is blocking the entrance.'], correct: 3, audioScript: 'Your car is blocking the entrance. A delivery truck is unable to enter.', keyInfo: 'car is blocking the entrance', explanation: 'Chiếc xe đang chắn lối ra vào -> Đáp án D.' },
+  { id: 1, section: 'Listening', question: '1. What time will the flight now be leaving?', options: ['A. At 6:00', 'B. At 7:00', 'C. At 7:15', 'D. At 7:50'], correct: 2, audioScript: 'The flight will now be leaving at 7:15 p.m. from gate 22A.', explanation: 'Giờ khởi hành mới được thông báo là 7:15 p.m. -> Đáp án C.' },
+  { id: 2, section: 'Listening', question: '2. How much will a $50 sweater cost now?', options: ['A. $50', 'B. $5', 'C. $15', 'D. $25'], correct: 3, audioScript: 'Every sweater will be 50% off. You can buy any child’s sweater at half the original price.', explanation: 'Áo len $50 giảm giá 50% còn $25 -> Đáp án D.' },
+  { id: 3, section: 'Listening', question: '3. What number is the white line?', options: ['A. 6', 'B. 4', 'C. 7', 'D. 3'], correct: 1, audioScript: 'You can transfer to the white line, line number 4, to Seoul soccer stadium.', explanation: 'Tuyến màu trắng là tuyến số 4 -> Đáp án B.' },
+  { id: 4, section: 'Listening', question: '4. What color is the dog?', options: ['A. White with brown paws', 'B. Brown with white paws', 'C. Brown with black paws', 'D. Black with brown paws'], correct: 1, audioScript: 'It is brown with white paws and answers to the name Sam.', explanation: 'Chú chó màu nâu và có 4 chân trắng -> Đáp án B.' },
+  { id: 5, section: 'Listening', question: '5. What difference will be seen between Monday and Tuesday?', options: ['A. Monday will be much hotter.', 'B. Tuesday will have more rain.', 'C. Temperatures will be slightly higher on Tuesday.', 'D. There will be more rain showers on Monday.'], correct: 2, audioScript: 'Tuesday will also have similar conditions with slightly higher temperatures of about 23 degrees in the north.', explanation: 'Thứ Ba nhiệt độ sẽ cao hơn một chút -> Đáp án C.' },
+  { id: 6, section: 'Listening', question: '6. Why are the students being sent home?', options: ['A. It is a school holiday.', 'B. There is a problem with the gas pipes.', 'C. Some of the teachers are absent.', 'D. The water pipes have burst.'], correct: 1, audioScript: "Due to a burst in the gas pipes as well as the extremely cold weather, today's classes will be canceled.", explanation: 'Học sinh được cho về nhà do sự cố vỡ ống gas -> Đáp án B.' },
+  { id: 7, section: 'Listening', question: '7. What will happen in thirty minutes?', options: ['A. The plane will land.', 'B. Dinner will be served.', 'C. The plane will enter an area of bad weather.', 'D. Lunch will be served.'], correct: 3, audioScript: 'We should pass through the bad weather within thirty minutes, at which time lunch will be served.', explanation: 'Sau 30 phút nữa bữa trưa sẽ được phục vụ -> Đáp án D.' },
+  { id: 8, section: 'Listening', question: '8. What is the problem?', options: ['A. A car has a flat tire.', 'B. A car has been stolen.', 'C. A car has broken down.', 'D. A car is blocking the entrance.'], correct: 3, audioScript: 'Your car is blocking the entrance. A delivery truck is unable to enter.', explanation: 'Chiếc xe đang chắn lối ra vào -> Đáp án D.' },
 ];
 
-// 2. SECTION 2 & 3: GRAMMAR, VOCABULARY & READING (9 - 40)
-const mockKnowledgeQuestions: Question[] = [
-  // SECTION 2: GRAMMAR & VOCABULARY (9 - 28)
-  { id: 9, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '9. My brother _____ English every evening.', options: ['A. study', 'B. studies', 'C. is studying', 'D. studied'], correct: 1, explanation: 'Chủ ngữ ngôi thứ ba số ít "My brother" đi với thì Hiện tại đơn: studies.' },
-  { id: 10, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '10. Please be quiet. I _____ to finish my assignment.', options: ['A. try', 'B. tried', 'C. am trying', 'D. have tried'], correct: 2, explanation: 'Dấu hiệu "Please be quiet" chỉ hành động đang diễn ra -> Thì Hiện tại tiếp diễn: am trying.' },
-  { id: 11, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '11. We _____ to Ho Chi Minh City last weekend.', options: ['A. go', 'B. went', 'C. have gone', 'D. are going'], correct: 1, explanation: 'Dấu hiệu "last weekend" chỉ hành động đã xảy ra và chấm dứt trong quá khứ -> Quá khứ đơn: went.' },
-  { id: 12, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '12. While I _____ dinner, my friend called me.', options: ['A. cooked', 'B. was cooking', 'C. am cooking', 'D. have cooked'], correct: 1, explanation: 'Hành động đang diễn ra trong quá khứ dùng Quá khứ tiếp diễn (was cooking) thì hành động khác xen vào (called).' },
-  { id: 13, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '13. She _____ at this company since 2022.', options: ['A. works', 'B. worked', 'C. has worked', 'D. is working'], correct: 2, explanation: 'Dấu hiệu "since 2022" dùng thì Hiện tại hoàn thành: has worked.' },
-  { id: 14, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: "14. I _____ for the bus for nearly an hour, but it still hasn't arrived.", options: ['A. wait', 'B. waited', 'C. am waiting', 'D. have been waiting'], correct: 3, explanation: 'Hành động chờ xe buýt kéo dài liên tục từ quá khứ đến hiện tại -> Hiện tại hoàn thành tiếp diễn: have been waiting.' },
-  { id: 15, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '15. I think more people _____ electric cars in the future.', options: ['A. use', 'B. used', 'C. will use', 'D. have used'], correct: 2, explanation: 'Dự đoán tương lai với "I think ... in the future" dùng Tương lai đơn: will use.' },
-  { id: 16, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '16. Look at those dark clouds! It _____ rain.', options: ['A. will', 'B. is going to', 'C. would', 'D. has'], correct: 1, explanation: 'Dự đoán có bằng chứng rõ ràng ở hiện tại ("dark clouds") dùng "be going to".' },
-  { id: 17, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '17. English _____ in many countries around the world.', options: ['A. speaks', 'B. is spoken', 'C. spoke', 'D. is speaking'], correct: 1, explanation: 'Câu bị động ở thì Hiện tại đơn: S + is/am/are + V3/ed (is spoken).' },
-  { id: 18, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '18. If I have enough time tonight, I _____ you.', options: ['A. call', 'B. called', 'C. will call', 'D. would call'], correct: 2, explanation: 'Câu điều kiện loại 1: If + S + V(s/es), S + will + V nguyên mẫu.' },
-  { id: 19, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '19. If I _____ more confident, I would speak English more often.', options: ['A. am', 'B. were', 'C. will be', 'D. have been'], correct: 1, explanation: 'Câu điều kiện loại 2 giả định không có thật ở hiện tại: If + S + were/V2, S + would + V.' },
-  { id: 20, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '20. I wish I _____ English more fluently.', options: ['A. speak', 'B. spoke', 'C. will speak', 'D. am speaking'], correct: 1, explanation: 'Câu ước ở hiện tại: S + wish + S + V2/ed (spoke).' },
-  { id: 21, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '21. The students completed the assignment _____.', options: ['A. successful', 'B. success', 'C. successfully', 'D. succeed'], correct: 2, explanation: 'Cần trạng từ (adv) "successfully" để bổ nghĩa cho động từ "completed".' },
-  { id: 22, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '22. Although the task was difficult, _____.', options: ['A. but we completed it', 'B. we completed it successfully', 'C. because we completed it', 'D. so we completed it'], correct: 1, explanation: 'Mệnh đề bắt đầu bằng "Although" thì mệnh đề chính không dùng "but/so/because".' },
-  { id: 23, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '23. Regular exercise is _____ for both physical and mental health.', options: ['A. benefit', 'B. beneficial', 'C. beneficiary', 'D. beneficially'], correct: 1, explanation: 'Sau "is" cần tính từ (adj) "beneficial" (có lợi).' },
-  { id: 24, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '24. Many students find it difficult to _____ their time effectively.', options: ['A. manage', 'B. management', 'C. manager', 'D. manageable'], correct: 0, explanation: 'Cấu trúc "find it difficult to + V nguyên mẫu" -> manage (quản lý).' },
-  { id: 25, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '25. The new public transport system is more _____ than the old one.', options: ['A. convenience', 'B. conveniently', 'C. convenient', 'D. convenienced'], correct: 2, explanation: 'So sánh hơn của tính từ: more + adj + than -> convenient (tiện lợi).' },
-  { id: 26, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '26. Learning a foreign language can _____ your employment opportunities.', options: ['A. improve', 'B. rise', 'C. grow up', 'D. develop up'], correct: 0, explanation: 'Cụm từ thích hợp: "improve employment opportunities" (nâng cao cơ hội việc làm).' },
-  { id: 27, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '27. The government should take effective measures to _____ air pollution.', options: ['A. reduce', 'B. fall', 'C. drop', 'D. decline'], correct: 0, explanation: '"Reduce air pollution" = giảm thiểu ô nhiễm không khí.' },
-  { id: 28, section: 'Grammar & Vocabulary', partTitle: 'SECTION 2: GRAMMAR & VOCABULARY', question: '28. Good communication plays an important _____ in maintaining healthy relationships.', options: ['A. place', 'B. role', 'C. position', 'D. work'], correct: 1, explanation: 'Cụm collocations cố định: "play an important role in" (đóng vai trò quan trọng).' },
+// 2. SECTION 2: GRAMMAR & VOCABULARY (9 - 28)
+const mockGrammarVocabQuestions: Question[] = [
+  { id: 9, section: 'Grammar & Vocabulary', question: '9. My brother _____ English every evening.', options: ['A. study', 'B. studies', 'C. is studying', 'D. studied'], correct: 1, explanation: 'Chủ ngữ ngôi thứ ba số ít "My brother" đi với thì Hiện tại đơn: studies.' },
+  { id: 10, section: 'Grammar & Vocabulary', question: '10. Please be quiet. I _____ to finish my assignment.', options: ['A. try', 'B. tried', 'C. am trying', 'D. have tried'], correct: 2, explanation: 'Dấu hiệu "Please be quiet" chỉ hành động đang diễn ra -> Thì Hiện tại tiếp diễn: am trying.' },
+  { id: 11, section: 'Grammar & Vocabulary', question: '11. We _____ to Ho Chi Minh City last weekend.', options: ['A. go', 'B. went', 'C. have gone', 'D. are going'], correct: 1, explanation: 'Dấu hiệu "last weekend" chỉ hành động đã xảy ra và chấm dứt trong quá khứ -> Quá khứ đơn: went.' },
+  { id: 12, section: 'Grammar & Vocabulary', question: '12. While I _____ dinner, my friend called me.', options: ['A. cooked', 'B. was cooking', 'C. am cooking', 'D. have cooked'], correct: 1, explanation: 'Hành động đang diễn ra trong quá khứ dùng Quá khứ tiếp diễn (was cooking) thì hành động khác xen vào (called).' },
+  { id: 13, section: 'Grammar & Vocabulary', question: '13. She _____ at this company since 2022.', options: ['A. works', 'B. worked', 'C. has worked', 'D. is working'], correct: 2, explanation: 'Dấu hiệu "since 2022" dùng thì Hiện tại hoàn thành: has worked.' },
+  { id: 14, section: 'Grammar & Vocabulary', question: "14. I _____ for the bus for nearly an hour, but it still hasn't arrived.", options: ['A. wait', 'B. waited', 'C. am waiting', 'D. have been waiting'], correct: 3, explanation: 'Hành động chờ xe buýt kéo dài liên tục từ quá khứ đến hiện tại -> Hiện tại hoàn thành tiếp diễn: have been waiting.' },
+  { id: 15, section: 'Grammar & Vocabulary', question: '15. I think more people _____ electric cars in the future.', options: ['A. use', 'B. used', 'C. will use', 'D. have used'], correct: 2, explanation: 'Dự đoán tương lai với "I think ... in the future" dùng Tương lai đơn: will use.' },
+  { id: 16, section: 'Grammar & Vocabulary', question: '16. Look at those dark clouds! It _____ rain.', options: ['A. will', 'B. is going to', 'C. would', 'D. has'], correct: 1, explanation: 'Dự đoán có bằng chứng rõ ràng ở hiện tại ("dark clouds") dùng "be going to".' },
+  { id: 17, section: 'Grammar & Vocabulary', question: '17. English _____ in many countries around the world.', options: ['A. speaks', 'B. is spoken', 'C. spoke', 'D. is speaking'], correct: 1, explanation: 'Câu bị động ở thì Hiện tại đơn: S + is/am/are + V3/ed (is spoken).' },
+  { id: 18, section: 'Grammar & Vocabulary', question: '18. If I have enough time tonight, I _____ you.', options: ['A. call', 'B. called', 'C. will call', 'D. would call'], correct: 2, explanation: 'Câu điều kiện loại 1: If + S + V(s/es), S + will + V nguyên mẫu.' },
+  { id: 19, section: 'Grammar & Vocabulary', question: '19. If I _____ more confident, I would speak English more often.', options: ['A. am', 'B. were', 'C. will be', 'D. have been'], correct: 1, explanation: 'Câu điều kiện loại 2 giả định không có thật ở hiện tại: If + S + were/V2, S + would + V.' },
+  { id: 20, section: 'Grammar & Vocabulary', question: '20. I wish I _____ English more fluently.', options: ['A. speak', 'B. spoke', 'C. will speak', 'D. am speaking'], correct: 1, explanation: 'Câu ước ở hiện tại: S + wish + S + V2/ed (spoke).' },
+  { id: 21, section: 'Grammar & Vocabulary', question: '21. The students completed the assignment _____.', options: ['A. successful', 'B. success', 'C. successfully', 'D. succeed'], correct: 2, explanation: 'Cần trạng từ (adv) "successfully" để bổ nghĩa cho động từ "completed".' },
+  { id: 22, section: 'Grammar & Vocabulary', question: '22. Although the task was difficult, _____.', options: ['A. but we completed it', 'B. we completed it successfully', 'C. because we completed it', 'D. so we completed it'], correct: 1, explanation: 'Mệnh đề bắt đầu bằng "Although" thì mệnh đề chính không dùng "but/so/because".' },
+  { id: 23, section: 'Grammar & Vocabulary', question: '23. Regular exercise is _____ for both physical and mental health.', options: ['A. benefit', 'B. beneficial', 'C. beneficiary', 'D. beneficially'], correct: 1, explanation: 'Sau "is" cần tính từ (adj) "beneficial" (có lợi).' },
+  { id: 24, section: 'Grammar & Vocabulary', question: '24. Many students find it difficult to _____ their time effectively.', options: ['A. manage', 'B. management', 'C. manager', 'D. manageable'], correct: 0, explanation: 'Cấu trúc "find it difficult to + V nguyên mẫu" -> manage (quản lý).' },
+  { id: 25, section: 'Grammar & Vocabulary', question: '25. The new public transport system is more _____ than the old one.', options: ['A. convenience', 'B. conveniently', 'C. convenient', 'D. convenienced'], correct: 2, explanation: 'So sánh hơn của tính từ: more + adj + than -> convenient (tiện lợi).' },
+  { id: 26, section: 'Grammar & Vocabulary', question: '26. Learning a foreign language can _____ your employment opportunities.', options: ['A. improve', 'B. rise', 'C. grow up', 'D. develop up'], correct: 0, explanation: 'Cụm từ thích hợp: "improve employment opportunities" (nâng cao cơ hội việc làm).' },
+  { id: 27, section: 'Grammar & Vocabulary', question: '27. The government should take effective measures to _____ air pollution.', options: ['A. reduce', 'B. fall', 'C. drop', 'D. decline'], correct: 0, explanation: '"Reduce air pollution" = giảm thiểu ô nhiễm không khí.' },
+  { id: 28, section: 'Grammar & Vocabulary', question: '28. Good communication plays an important _____ in maintaining healthy relationships.', options: ['A. place', 'B. role', 'C. position', 'D. work'], correct: 1, explanation: 'Cụm collocations cố định: "play an important role in" (đóng vai trò quan trọng).' },
+];
 
-  // SECTION 3: READING - PASSAGE 1: Cycling in Cities (29 - 34)
-  { id: 29, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '29. What is the passage mainly about?', options: ['A. The cost of owning a car', 'B. Cycling as a form of urban transport', 'C. Different types of exercise', 'D. Problems with public transport'], correct: 1, explanation: 'Bài đọc viết về việc đạp xe như một phương tiện giao thông phổ biến ở đô thị.' },
-  { id: 30, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '30. Why do some people choose bicycles?', options: ['A. To avoid traffic jams', 'B. To travel longer distances', 'C. To earn money', 'D. To avoid exercise'], correct: 0, explanation: 'Dẫn chứng: "Some people choose bicycles because they want to avoid traffic jams..."' },
-  { id: 31, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '31. Which problem for cyclists is mentioned in the passage?', options: ['A. Expensive fuel', 'B. Lack of parking spaces', 'C. Heavy traffic', 'D. High public transport fares'], correct: 2, explanation: 'Dẫn chứng: "Heavy traffic can make cyclists feel unsafe..."' },
-  { id: 32, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '32. The word “discourage” is closest in meaning to _____.', options: ['A. make someone less willing to do something', 'B. force someone to do something', 'C. teach someone how to do something', 'D. allow someone to do something'], correct: 0, explanation: '"Discourage" nghĩa là làm cho ai đó nản lòng / giảm ý muốn làm việc gì đó.' },
-  { id: 33, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '33. What are some local governments doing to encourage cycling?', options: ['A. Making cars cheaper', 'B. Building more motorways', 'C. Providing more cycling facilities', 'D. Reducing public transport services'], correct: 2, explanation: 'Dẫn chứng: "...building new cycle lanes and providing bicycle-sharing services" (cung cấp thêm cơ sở vật chất cho xe đạp).' },
-  { id: 34, section: 'Reading Passage 1', partTitle: 'SECTION 3: READING - BÀI ĐỌC 1 (CYCLING IN CITIES)', question: '34. The word “them” in paragraph 1 refers to _____.', options: ['A. cities', 'B. traffic jams', 'C. bicycles', 'D. people'], correct: 2, explanation: 'Từ "them" thay thế cho "bicycles" trong câu "...while others use them as a way to exercise."' },
+// 3. SECTION 3: READING PASSAGE 1 (29 - 34)
+const mockReadingPassage1: Question[] = [
+  { id: 29, section: 'Reading Passage 1', question: '29. What is the passage mainly about?', options: ['A. The cost of owning a car', 'B. Cycling as a form of urban transport', 'C. Different types of exercise', 'D. Problems with public transport'], correct: 1, explanation: 'Bài đọc viết về việc đạp xe như một phương tiện giao thông phổ biến ở đô thị.' },
+  { id: 30, section: 'Reading Passage 1', question: '30. Why do some people choose bicycles?', options: ['A. To avoid traffic jams', 'B. To travel longer distances', 'C. To earn money', 'D. To avoid exercise'], correct: 0, explanation: 'Dẫn chứng: "Some people choose bicycles because they want to avoid traffic jams..."' },
+  { id: 31, section: 'Reading Passage 1', question: '31. Which problem for cyclists is mentioned in the passage?', options: ['A. Expensive fuel', 'B. Lack of parking spaces', 'C. Heavy traffic', 'D. High public transport fares'], correct: 2, explanation: 'Dẫn chứng: "Heavy traffic can make cyclists feel unsafe..."' },
+  { id: 32, section: 'Reading Passage 1', question: '32. The word “discourage” is closest in meaning to _____.', options: ['A. make someone less willing to do something', 'B. force someone to do something', 'C. teach someone how to do something', 'D. allow someone to do something'], correct: 0, explanation: '"Discourage" nghĩa là làm cho ai đó nản lòng / giảm ý muốn làm việc gì đó.' },
+  { id: 33, section: 'Reading Passage 1', question: '33. What are some local governments doing to encourage cycling?', options: ['A. Making cars cheaper', 'B. Building more motorways', 'C. Providing more cycling facilities', 'D. Reducing public transport services'], correct: 2, explanation: 'Dẫn chứng: "...building new cycle lanes and providing bicycle-sharing services" (cung cấp thêm cơ sở vật chất cho xe đạp).' },
+  { id: 34, section: 'Reading Passage 1', question: '34. The word “them” in paragraph 1 refers to _____.', options: ['A. cities', 'B. traffic jams', 'C. bicycles', 'D. people'], correct: 2, explanation: 'Từ "them" thay thế cho "bicycles" trong câu "...while others use them as a way to exercise."' },
+];
 
-  // SECTION 3: READING - PASSAGE 2: The Changing Workplace (35 - 40)
-  { id: 35, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '35. What is the main idea of the passage?', options: ['A. Offices will completely disappear in the future.', 'B. Technology has contributed to changes in working arrangements.', 'C. Employees generally dislike working with other people.', 'D. Companies should require employees to work from home.'], correct: 1, explanation: 'Bài đọc nêu bật sự đóng góp của công nghệ vào sự thay đổi mô hình làm việc (remote & hybrid).' },
-  { id: 36, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '36. What is one advantage of working from home?', options: ['A. Employees do not need to communicate with colleagues.', 'B. Employees work fewer hours.', 'C. Employees can save commuting time and money.', 'D. Employees receive higher salaries.'], correct: 2, explanation: 'Dẫn chứng: "Employees can save time and money by avoiding daily travel..."' },
-  { id: 37, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '37. What problem may remote workers experience?', options: ['A. Difficulty separating work and personal life', 'B. Too much face-to-face communication', 'C. Increased travelling costs', 'D. Lack of access to technology'], correct: 0, explanation: 'Dẫn chứng: "Some employees find it difficult to separate their professional and personal lives."' },
-  { id: 38, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '38. The word “isolated” is closest in meaning to _____.', options: ['A. productive', 'B. disconnected', 'C. confident', 'D. organised'], correct: 1, explanation: '"Isolated" mang nghĩa cô lập, mất kết nối với mọi người xung quanh (disconnected).' },
-  { id: 39, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '39. Why are many organisations adopting hybrid working arrangements?', options: ['A. To eliminate online communication', 'B. To combine remote work with face-to-face interaction', 'C. To make employees work longer hours', 'D. To remove offices completely'], correct: 1, explanation: 'Dẫn chứng: "This approach allows employees to work remotely on certain days while still meeting colleagues in person."' },
-  { id: 40, section: 'Reading Passage 2', partTitle: 'SECTION 3: READING - BÀI ĐỌC 2 (THE CHANGING WORKPLACE)', question: '40. What can be inferred from the final paragraph?', options: ['A. Traditional offices will certainly disappear.', 'B. Remote working has no disadvantages.', 'C. Flexible working arrangements are likely to continue.', 'D. Every organisation should use the same working model.'], correct: 2, explanation: 'Dẫn chứng: "...the changing workplace suggests that flexibility is likely to remain an important feature of employment."' },
+// 4. SECTION 3: READING PASSAGE 2 (35 - 40)
+const mockReadingPassage2: Question[] = [
+  { id: 35, section: 'Reading Passage 2', question: '35. What is the main idea of the passage?', options: ['A. Offices will completely disappear in the future.', 'B. Technology has contributed to changes in working arrangements.', 'C. Employees generally dislike working with other people.', 'D. Companies should require employees to work from home.'], correct: 1, explanation: 'Bài đọc nêu bật sự đóng góp của công nghệ vào sự thay đổi mô hình làm việc (remote & hybrid).' },
+  { id: 36, section: 'Reading Passage 2', question: '36. What is one advantage of working from home?', options: ['A. Employees do not need to communicate with colleagues.', 'B. Employees work fewer hours.', 'C. Employees can save commuting time and money.', 'D. Employees receive higher salaries.'], correct: 2, explanation: 'Dẫn chứng: "Employees can save time and money by avoiding daily travel..."' },
+  { id: 37, section: 'Reading Passage 2', question: '37. What problem may remote workers experience?', options: ['A. Difficulty separating work and personal life', 'B. Too much face-to-face communication', 'C. Increased travelling costs', 'D. Lack of access to technology'], correct: 0, explanation: 'Dẫn chứng: "Some employees find it difficult to separate their professional and personal lives."' },
+  { id: 38, section: 'Reading Passage 2', question: '38. The word “isolated” is closest in meaning to _____.', options: ['A. productive', 'B. disconnected', 'C. confident', 'D. organised'], correct: 1, explanation: '"Isolated" mang nghĩa cô lập, mất kết nối với mọi người xung quanh (disconnected).' },
+  { id: 39, section: 'Reading Passage 2', question: '39. Why are many organisations adopting hybrid working arrangements?', options: ['A. To eliminate online communication', 'B. To combine remote work with face-to-face interaction', 'C. To make employees work longer hours', 'D. To remove offices completely'], correct: 1, explanation: 'Dẫn chứng: "This approach allows employees to work remotely on certain days while still meeting colleagues in person."' },
+  { id: 40, section: 'Reading Passage 2', question: '40. What can be inferred from the final paragraph?', options: ['A. Traditional offices will certainly disappear.', 'B. Remote working has no disadvantages.', 'C. Flexible working arrangements are likely to continue.', 'D. Every organisation should use the same working model.'], correct: 2, explanation: 'Dẫn chứng: "...the changing workplace suggests that flexibility is likely to remain an important feature of employment."' },
 ];
 
 export default function PlacementTestPage() {
-  const [currentStep, setCurrentStep] = useState<'start' | 'listening' | 'quiz' | 'writing' | 'analyzing' | 'result'>('start');
+  const [currentStep, setCurrentStep] = useState<'start' | 'listening' | 'grammar' | 'reading' | 'writing' | 'analyzing' | 'result'>('start');
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -88,7 +88,7 @@ export default function PlacementTestPage() {
   const [aiFeedback, setAiFeedback] = useState<any>(null);
 
   useEffect(() => {
-    if (currentStep !== 'listening' && currentStep !== 'quiz' && currentStep !== 'writing') return;
+    if (currentStep === 'start' || currentStep === 'analyzing' || currentStep === 'result') return;
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -123,7 +123,7 @@ export default function PlacementTestPage() {
     });
 
     let gvrCount = 0;
-    mockKnowledgeQuestions.forEach((q) => {
+    mockGrammarVocabQuestions.concat(mockReadingPassage1, mockReadingPassage2).forEach((q) => {
       if (answers[q.id] === q.correct) gvrCount += 1;
     });
 
@@ -144,7 +144,6 @@ export default function PlacementTestPage() {
     setCurrentStep('listening');
   };
 
-  // HỆ THỐNG PHÂN TÍCH TIÊU CHÍ VSTEP WRITING CHI TIẾT
   const generateDynamicFeedback = (text: string, student: string) => {
     const trimmed = text.trim();
     const words = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
@@ -199,7 +198,7 @@ export default function PlacementTestPage() {
           vocabulary: 1.0,
           vocabularyComment: 'Chưa thể hiện được vốn từ vựng học thuật theo chủ đề.',
           total: 4.0,
-          analysis: `Bài viết chỉ có ${words} từ, chưa đạt dung lượng tối thiểu 120–150 từ. Học viên cần được củng cố lại toàn diện kỹ năng viết câu và bố cục email.`
+          analysis: `Bài viết chỉ có ${words} từ, chưa đạt dung lượng tối thiểu 120–150 từ.`
         },
         strengths: ['Đã hoàn thành các phần trắc nghiệm Nghe, Ngữ pháp và Đọc hiểu.'],
         areasForImprovement: [
@@ -269,13 +268,13 @@ export default function PlacementTestPage() {
       wordCount: words,
       wordStatus,
       taskRequirements: [
-        { req: 'Nêu quan điểm về việc học tiếng Anh online', passed: true, comment: 'Đã nêu rõ quan điểm ủng hộ/không ủng hộ một cách thuyết phục.' },
+        { req: 'Nêu quan điểm về việc học tiếng Anh online', passed: true, comment: 'Đã nêu rõ quan điểm một cách thuyết phục.' },
         { req: 'Phân tích ưu điểm / nhược điểm của học trực tuyến', passed: true, comment: 'Đã phân tích các khía cạnh tiện lợi, thời gian hoặc tương tác.' },
         { req: 'Đưa ra lời khuyên học tiếng Anh hiệu quả cho Alex', passed: true, comment: 'Đưa ra lời khuyên thiết thực và hữu ích.' }
       ],
       taskBreakdown: {
         taskAchievement: ta,
-        taskAchievementComment: `Hoàn thành tốt các yêu cầu đề bài. Dung lượng bài viết đạt ${words} từ (chuẩn 120-150 từ). Đầy đủ 3 trọng tâm.`,
+        taskAchievementComment: `Hoàn thành tốt các yêu cầu đề bài. Dung lượng bài viết đạt ${words} từ (chuẩn 120-150 từ).`,
         organization: oc,
         organizationComment: 'Bố cục email chuẩn mực (Dear Alex -> Opening -> 2 Thân bài -> Closing).',
         grammar: gr,
@@ -292,8 +291,7 @@ export default function PlacementTestPage() {
       ],
       areasForImprovement: [
         'Cần chú ý một số lỗi chia thì và sự hòa hợp chủ - vị.',
-        'Nên ứng dụng thêm các liên từ học thuật (Furthermore, On the other hand).',
-        'Có thể mở rộng thêm một số mệnh đề quan hệ để tăng độ tự nhiên cho câu.'
+        'Nên ứng dụng thêm các liên từ học thuật (Furthermore, On the other hand).'
       ],
       suggestedCorrections: [
         {
@@ -345,8 +343,6 @@ export default function PlacementTestPage() {
     return { title: '① VSTEP B1 FOUNDATION (4 THÁNG)', desc: 'Học viên bị hổng kiến thức hoặc nền tảng chưa vững. Cần học lộ trình Foundation củng cố lại toàn diện.', badgeBg: 'bg-amber-100 text-amber-800 border-amber-300' };
   };
 
-  const currentQ = mockKnowledgeQuestions[currentQuestionIndex];
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
       <header className="border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
@@ -355,7 +351,7 @@ export default function PlacementTestPage() {
             <BookOpen className="h-6 w-6 text-blue-600" />
             <span className="tracking-tight text-slate-900">VSTEP<span className="text-blue-600">MASTER</span></span>
           </Link>
-          {(currentStep === 'listening' || currentStep === 'quiz' || currentStep === 'writing') && (
+          {currentStep !== 'start' && currentStep !== 'analyzing' && currentStep !== 'result' && (
             <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-mono text-sm font-bold border ${timeLeft < 300 ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse' : 'bg-slate-100 text-slate-700 border-slate-200'}`}>
               <Clock className="h-4 w-4" />
               <span>{formatTime(timeLeft)}</span>
@@ -365,8 +361,9 @@ export default function PlacementTestPage() {
         </div>
       </header>
 
-      <div className="container mx-auto max-w-3xl px-4 pt-10">
-        {/* Màn hình 1: Bắt đầu */}
+      <div className="container mx-auto max-w-3xl px-4 pt-8">
+        
+        {/* MÀN HÌNH BẮT ĐẦU */}
         {currentStep === 'start' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
             <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -380,7 +377,7 @@ export default function PlacementTestPage() {
             <div className="my-6 text-left bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <h4 className="font-bold uppercase tracking-wider text-slate-700 mb-2">📋 CẤU TRÚC 4 PHẦN THI ĐÁNH GIÁ NĂNG LỰC:</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div className="bg-white p-2.5 rounded-lg border">🎧 <b>Section 1: Listening (Câu 1 - 8)</b> – 8 đoạn audio ngắn (20đ)</div>
+                <div className="bg-white p-2.5 rounded-lg border">🎧 <b>Section 1: Listening (Câu 1 - 8)</b> – 8 câu audio ngắn (20đ)</div>
                 <div className="bg-white p-2.5 rounded-lg border">📚 <b>Section 2: Grammar & Vocab (Câu 9 - 28)</b> – 20 câu trắc nghiệm</div>
                 <div className="bg-white p-2.5 rounded-lg border">📖 <b>Section 3: Reading (Câu 29 - 40)</b> – 2 bài đọc hiểu chuyên sâu</div>
                 <div className="bg-white p-2.5 rounded-lg border">✍️ <b>Section 4: Writing Email</b> – Viết thư cho Alex (30đ)</div>
@@ -393,7 +390,7 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Modal Điền Thông Tin */}
+        {/* MODAL ĐIỀN THÔNG TIN */}
         {showModal && (
           <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
@@ -426,14 +423,14 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Màn hình 2: SECTION 1 - LISTENING (1 - 8) */}
+        {/* SECTION 1: LISTENING (DANH SÁCH 8 CÂU) */}
         {currentStep === 'listening' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
             <div className="border-b pb-4">
-              <div className="flex items-center gap-2 text-indigo-700 font-bold text-xl mb-1">
-                <Headphones className="h-6 w-6" /> SECTION 1: LISTENING (QUESTIONS 1–8)
-              </div>
-              <p className="text-xs text-slate-500 font-medium">
+              <span className="font-extrabold text-indigo-700 text-xs sm:text-sm uppercase tracking-wide bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-200">
+                🎧 SECTION 1: LISTENING (CÂU 1 - 8)
+              </span>
+              <p className="text-xs text-slate-500 font-medium mt-2">
                 Instructions: You will hear eight short recordings. Listen carefully and choose the best answer A, B, C, or D for each question.
               </p>
             </div>
@@ -477,99 +474,197 @@ export default function PlacementTestPage() {
 
             <div className="flex justify-end border-t pt-5">
               <button 
-                onClick={() => setCurrentStep('quiz')} 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('grammar');
+                }} 
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md transition"
               >
-                Chuyển Sang Grammar & Reading <ArrowRight className="h-4 w-4" />
+                Chuyển Sang Section 2: Grammar & Vocab <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
         )}
 
-        {/* Màn hình 3: GRAMMAR, VOCABULARY & READING (9 - 40 Làm lần lượt) */}
-        {currentStep === 'quiz' && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-            <div className="mb-4 pb-3 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+        {/* SECTION 2: GRAMMAR & VOCABULARY (DANH SÁCH 20 CÂU CUỘN TỰ DO) */}
+        {currentStep === 'grammar' && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <div className="border-b pb-4">
               <span className="font-extrabold text-blue-900 text-xs sm:text-sm uppercase tracking-wide bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
-                📌 {currentQ.partTitle}
+                📚 SECTION 2: GRAMMAR & VOCABULARY (CÂU 9 - 28)
               </span>
-              <span className="text-xs font-bold text-slate-500">
-                Câu {currentQ.id} / 40
-              </span>
+              <p className="text-xs text-slate-500 font-medium mt-2">
+                Instructions: Choose the best answer A, B, C, or D to complete each sentence. (Làm câu nào trước cũng được)
+              </p>
             </div>
 
-            {/* PASSAGE 1: Câu 29 - 34 */}
-            {currentQ.id >= 29 && currentQ.id <= 34 && (
-              <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-800 leading-relaxed shadow-sm space-y-2">
-                <span className="font-bold block text-blue-900 text-sm">Passage 1: Cycling in Cities</span>
-                <p>In many large cities, cycling is becoming an increasingly popular way to travel. Some people choose bicycles because they want to avoid traffic jams, while others use them as a way to exercise. Cycling can also be cheaper than driving because cyclists do not have to pay for fuel or expensive parking.</p>
-                <p>However, cycling in a busy city is not always easy. Heavy traffic can make cyclists feel unsafe, and some cities do not have enough bicycle lanes. Bad weather can also discourage people from cycling regularly.</p>
-                <p>To encourage more people to travel by bicycle, many local governments are building new cycle lanes and providing bicycle-sharing services. Supporters believe that if more people leave their cars at home, cities could become cleaner, quieter and healthier places to live.</p>
-              </div>
-            )}
-
-            {/* PASSAGE 2: Câu 35 - 40 */}
-            {currentQ.id >= 35 && currentQ.id <= 40 && (
-              <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-800 leading-relaxed shadow-sm space-y-2">
-                <span className="font-bold block text-blue-900 text-sm">Passage 2: The Changing Workplace</span>
-                <p>Technology has significantly changed the way people work. In the past, most employees were expected to travel to an office every day. Today, however, advances in communication technology have made remote and hybrid working possible for millions of workers.</p>
-                <p>Working from home offers several advantages. Employees can save time and money by avoiding daily travel, and many report having greater control over their schedules. Companies may also benefit because they can reduce the amount of office space they need.</p>
-                <p>Nevertheless, remote working presents challenges. Some employees find it difficult to separate their professional and personal lives. Others may feel isolated because they have fewer opportunities for face-to-face interaction with colleagues. Communication can also become more complicated when team members depend heavily on emails and online meetings.</p>
-                <p>For this reason, many organisations are adopting hybrid working arrangements rather than abandoning offices completely. This approach allows employees to work remotely on certain days while still meeting colleagues in person. Although no single system is suitable for every organisation, the changing workplace suggests that flexibility is likely to remain an important feature of employment.</p>
-              </div>
-            )}
-
-            <h2 className="text-lg font-bold text-slate-900 mb-4">{currentQ.question}</h2>
-            
-            <div className="space-y-3 mb-8">
-              {currentQ.options.map((option, idx) => (
-                <button 
-                  key={idx} 
-                  onClick={() => handleSelectOption(currentQ.id, idx)} 
-                  className={`w-full text-left p-4 rounded-xl border text-sm font-medium flex justify-between transition ${
-                    answers[currentQ.id] === idx 
-                      ? 'border-blue-600 bg-blue-50 text-blue-900 ring-1 ring-blue-600 font-bold' 
-                      : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
-                  }`}
-                >
-                  <span>{option}</span>
-                  {answers[currentQ.id] === idx && <CheckCircle className="h-5 w-5 text-blue-600 shrink-0" />}
-                </button>
+            <div className="space-y-6">
+              {mockGrammarVocabQuestions.map((q) => (
+                <div key={q.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                  <h3 className="font-bold text-sm text-slate-900">{q.question}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {q.options.map((opt, optIndex) => {
+                      const isSelected = answers[q.id] === optIndex;
+                      return (
+                        <button
+                          key={optIndex}
+                          onClick={() => handleSelectOption(q.id, optIndex)}
+                          className={`text-left p-3 rounded-xl border text-xs font-medium transition flex items-center justify-between ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-50 text-blue-900 font-bold ring-1 ring-blue-600'
+                              : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                          }`}
+                        >
+                          <span>{opt}</span>
+                          {isSelected && <CheckCircle className="h-4 w-4 text-blue-600 shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
 
             <div className="flex justify-between border-t pt-5">
               <button 
                 onClick={() => {
-                  if (currentQuestionIndex === 0) setCurrentStep('listening');
-                  else setCurrentQuestionIndex(currentQuestionIndex - 1);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('listening');
                 }} 
                 className="text-sm font-semibold text-slate-500"
               >
-                Quay lại
+                Quay lại Listening
               </button>
-              {currentQuestionIndex < mockKnowledgeQuestions.length - 1 ? (
-                <button 
-                  disabled={answers[currentQ.id] === undefined} 
-                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)} 
-                  className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition"
-                >
-                  Câu tiếp theo
-                </button>
-              ) : (
-                <button 
-                  disabled={answers[currentQ.id] === undefined} 
-                  onClick={() => setCurrentStep('writing')} 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md transition"
-                >
-                  Chuyển Sang Section 4: Writing <ArrowRight className="h-4 w-4" />
-                </button>
-              )}
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('reading');
+                }} 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md transition"
+              >
+                Chuyển Sang Section 3: Reading <ArrowRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         )}
 
-        {/* Màn hình 4: SECTION 4 - WRITING */}
+        {/* SECTION 3: READING (HIỆN TRỌN VẸN 2 BÀI ĐỌC KÈM CÂU HỎI LIÊN TỤC) */}
+        {currentStep === 'reading' && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-8">
+            <div className="border-b pb-4">
+              <span className="font-extrabold text-emerald-900 text-xs sm:text-sm uppercase tracking-wide bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                📖 SECTION 3: READING (CÂU 29 - 40)
+              </span>
+              <p className="text-xs text-slate-500 font-medium mt-2">
+                Instructions: Read the following passages and choose the best answer A, B, C, or D for each question.
+              </p>
+            </div>
+
+            {/* BÀI ĐỌC 1: Cycling in Cities */}
+            <div className="space-y-4">
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-800 leading-relaxed space-y-2 shadow-sm">
+                <span className="font-bold text-sm text-emerald-900 block border-b border-slate-200 pb-2">
+                  Passage 1: Cycling in Cities (Questions 29–34)
+                </span>
+                <p>In many large cities, cycling is becoming an increasingly popular way to travel. Some people choose bicycles because they want to avoid traffic jams, while others use them as a way to exercise. Cycling can also be cheaper than driving because cyclists do not have to pay for fuel or expensive parking.</p>
+                <p>However, cycling in a busy city is not always easy. Heavy traffic can make cyclists feel unsafe, and some cities do not have enough bicycle lanes. Bad weather can also discourage people from cycling regularly.</p>
+                <p>To encourage more people to travel by bicycle, many local governments are building new cycle lanes and providing bicycle-sharing services. Supporters believe that if more people leave their cars at home, cities could become cleaner, quieter and healthier places to live.</p>
+              </div>
+
+              {/* 6 Câu hỏi của Passage 1 */}
+              <div className="space-y-4 pt-2">
+                {mockReadingPassage1.map((q) => (
+                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                    <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {q.options.map((opt, optIndex) => {
+                        const isSelected = answers[q.id] === optIndex;
+                        return (
+                          <button
+                            key={optIndex}
+                            onClick={() => handleSelectOption(q.id, optIndex)}
+                            className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex items-center justify-between ${
+                              isSelected
+                                ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold ring-1 ring-emerald-600'
+                                : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                            }`}
+                          >
+                            <span>{opt}</span>
+                            {isSelected && <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* BÀI ĐỌC 2: The Changing Workplace */}
+            <div className="space-y-4 border-t pt-8">
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-800 leading-relaxed space-y-2 shadow-sm">
+                <span className="font-bold text-sm text-emerald-900 block border-b border-slate-200 pb-2">
+                  Passage 2: The Changing Workplace (Questions 35–40)
+                </span>
+                <p>Technology has significantly changed the way people work. In the past, most employees were expected to travel to an office every day. Today, however, advances in communication technology have made remote and hybrid working possible for millions of workers.</p>
+                <p>Working from home offers several advantages. Employees can save time and money by avoiding daily travel, and many report having greater control over their schedules. Companies may also benefit because they can reduce the amount of office space they need.</p>
+                <p>Nevertheless, remote working presents challenges. Some employees find it difficult to separate their professional and personal lives. Others may feel isolated because they have fewer opportunities for face-to-face interaction with colleagues. Communication can also become more complicated when team members depend heavily on emails and online meetings.</p>
+                <p>For this reason, many organisations are adopting hybrid working arrangements rather than abandoning offices completely. This approach allows employees to work remotely on certain days while still meeting colleagues in person. Although no single system is suitable for every organisation, the changing workplace suggests that flexibility is likely to remain an important feature of employment.</p>
+              </div>
+
+              {/* 6 Câu hỏi của Passage 2 */}
+              <div className="space-y-4 pt-2">
+                {mockReadingPassage2.map((q) => (
+                  <div key={q.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                    <h3 className="font-bold text-xs sm:text-sm text-slate-900">{q.question}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {q.options.map((opt, optIndex) => {
+                        const isSelected = answers[q.id] === optIndex;
+                        return (
+                          <button
+                            key={optIndex}
+                            onClick={() => handleSelectOption(q.id, optIndex)}
+                            className={`text-left p-2.5 rounded-lg border text-xs font-medium transition flex items-center justify-between ${
+                              isSelected
+                                ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold ring-1 ring-emerald-600'
+                                : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                            }`}
+                          >
+                            <span>{opt}</span>
+                            {isSelected && <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-between border-t pt-5">
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('grammar');
+                }} 
+                className="text-sm font-semibold text-slate-500"
+              >
+                Quay lại Grammar & Vocab
+              </button>
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('writing');
+                }} 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md transition"
+              >
+                Chuyển Sang Section 4: Writing <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 4: WRITING */}
         {currentStep === 'writing' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
             <h2 className="text-xl font-bold text-blue-950 flex items-center gap-2"><FileText className="h-6 w-6 text-blue-600" /> SECTION 4. WRITING (Suggested time: 20 minutes)</h2>
@@ -600,13 +695,21 @@ export default function PlacementTestPage() {
             </div>
 
             <div className="flex justify-between border-t pt-5">
-              <button onClick={() => setCurrentStep('quiz')} className="text-sm font-semibold text-slate-500">Quay lại phần Đọc</button>
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentStep('reading');
+                }} 
+                className="text-sm font-semibold text-slate-500"
+              >
+                Quay lại phần Đọc
+              </button>
               <button onClick={handleFinalSubmit} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg"><Sparkles className="h-4 w-4" /> Nộp Bài & Nhận Kết Quả</button>
             </div>
           </div>
         )}
 
-        {/* Màn hình 5: Loading */}
+        {/* LOADING */}
         {currentStep === 'analyzing' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm space-y-4">
             <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
@@ -615,7 +718,7 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Màn hình 6: Kết quả Thang 100 */}
+        {/* KẾT QUẢ THANG 100 */}
         {currentStep === 'result' && (() => {
           const { listeningScore, gvrScore, listeningCount, gvrCount, totalObjective } = calculateObjectiveScore();
           const tb = aiFeedback?.taskBreakdown || { taskAchievement: 1.0, organization: 1.0, grammar: 1.0, vocabulary: 1.0, total: 4.0, analysis: '' };
@@ -625,7 +728,6 @@ export default function PlacementTestPage() {
 
           return (
             <div className="space-y-8">
-              {/* Thẻ Điểm Tổng Quát */}
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center">
                 <Award className="h-12 w-12 text-emerald-600 mx-auto mb-2" />
                 <h1 className="text-2xl font-bold text-slate-900">Kết Quả VSTEP Placement Test</h1>
@@ -654,7 +756,7 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* BẢNG ĐÁNH GIÁ WRITING CHI TIẾT TỪNG TIÊU CHÍ */}
+              {/* BẢNG ĐÁNH GIÁ WRITING */}
               <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
                 <div className="flex items-center justify-between border-b pb-4">
                   <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
@@ -665,7 +767,6 @@ export default function PlacementTestPage() {
                   </span>
                 </div>
 
-                {/* 1. KHUNG HIỂN THỊ BÀI VIẾT NGUYÊN VĂN CỦA HỌC VIÊN */}
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                   <div className="flex justify-between items-center">
                     <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -680,7 +781,6 @@ export default function PlacementTestPage() {
                   </div>
                 </div>
 
-                {/* 2. ĐÁNH GIÁ ĐỘ DÀI & SỐ TỪ */}
                 <div className={`p-4 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2 ${aiFeedback?.wordStatus?.color || 'bg-slate-50 border-slate-200'}`}>
                   <div>
                     <span className="font-bold block text-sm mb-0.5">📊 Kiểm tra dung lượng bài viết:</span>
@@ -691,7 +791,6 @@ export default function PlacementTestPage() {
                   </span>
                 </div>
 
-                {/* 3. CHECKLIST HOÀN THÀNH 3 YÊU CẦU ĐỀ BÀI (TASK FULFILLMENT) */}
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                     <CheckSquare className="h-4 w-4 text-blue-600" /> Trạng thái hoàn thành 3 yêu cầu đề bài (Task Fulfillment):
@@ -721,7 +820,6 @@ export default function PlacementTestPage() {
                   </div>
                 </div>
 
-                {/* 4. CHI TIẾT 4 TIÊU CHÍ VSTEP (MỖI TIÊU CHÍ 7.5 ĐIỂM) */}
                 <div className="space-y-3">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700">
                     🎯 Chi tiết điểm 4 tiêu chí chấm thi VSTEP:
@@ -761,7 +859,6 @@ export default function PlacementTestPage() {
                   </div>
                 </div>
 
-                {/* 5. SỬA LỖI & GỢI Ý CÂU VIẾT CHUẨN */}
                 {aiFeedback?.suggestedCorrections && aiFeedback.suggestedCorrections.length > 0 && (
                   <div>
                     <h4 className="font-bold text-sm text-slate-800 uppercase mb-2 flex items-center gap-1.5"><MessageSquare className="h-4 w-4 text-blue-600" /> Sửa lỗi trực tiếp câu của học viên:</h4>
@@ -783,7 +880,6 @@ export default function PlacementTestPage() {
                   </div>
                 )}
 
-                {/* 6. ĐIỂM MẠNH & LỖI CẦN KHẮC PHỤC */}
                 {aiFeedback?.strengths && (
                   <div>
                     <h4 className="font-bold text-sm text-emerald-800 uppercase mb-2 flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4" /> Điểm mạnh ghi nhận</h4>
@@ -813,11 +909,11 @@ export default function PlacementTestPage() {
                 </div>
               </div>
 
-              {/* Giải Thích Chi Tiết Toàn Bộ 40 Câu */}
+              {/* GIẢI THÍCH CHI TIẾT TẤT CẢ CÂU HỎI */}
               <div className="bg-white rounded-2xl border p-6 sm:p-8 shadow-sm space-y-8">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Headphones className="h-5 w-5 text-indigo-600" /> Giải Thích Chi Tiết 8 Câu Listening (Có Script)
+                    <Headphones className="h-5 w-5 text-indigo-600" /> Giải Thích Chi Tiết 8 Câu Listening
                   </h3>
                   <div className="space-y-4">
                     {mockListeningQuestions.map((q) => {
@@ -849,7 +945,7 @@ export default function PlacementTestPage() {
                     <BookOpen className="h-5 w-5 text-blue-600" /> Giải Thích Chi Tiết Grammar, Vocabulary & Reading (Câu 9 - 40)
                   </h3>
                   <div className="space-y-4">
-                    {mockKnowledgeQuestions.map((q) => {
+                    {mockGrammarVocabQuestions.concat(mockReadingPassage1, mockReadingPassage2).map((q) => {
                       const isCorrect = answers[q.id] === q.correct;
                       return (
                         <div key={q.id} className={`p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'}`}>
