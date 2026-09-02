@@ -11,96 +11,102 @@ export async function POST(req: Request) {
     const text = (task1 || '').trim();
     const wordCount = text === '' ? 0 : text.split(/\s+/).length;
 
-    // 🌟 Cắt tách các câu thực tế từ bài viết của học viên
+    // Tách câu để phân tích cấu trúc
     const sentences = text.split(/(?<=[.!?])\s+/).filter((s: string) => s.length > 5);
-    const firstSentence = sentences.length > 0 ? sentences[0] : (text || 'Dear Alex, I am writing to share my opinion.');
-    const secondSentence = sentences.length > 1 ? sentences[1] : 'Online learning offers great flexibility.';
+    const firstSentence = sentences.length > 0 ? sentences[0] : (text || 'Chưa có nội dung.');
+    const secondSentence = sentences.length > 1 ? sentences[1] : 'Cần bổ sung thêm ý cho bài viết.';
 
     let evaluation: any = null;
 
+    // 🌟 Phân loại điểm nghiêm ngặt theo số lượng từ thực tế
     if (wordCount < 20) {
+      // Bài quá ngắn (như gõ "hello") -> Điểm liệt / rất thấp
       evaluation = {
         taskBreakdown: {
-          taskAchievement: 1.0, organization: 1.0, grammar: 1.0, vocabulary: 1.0, total: 4.0,
-          analysis: `Bài viết quá ngắn (${wordCount} từ).`
+          taskAchievement: 0.5,
+          organization: 0.5,
+          grammar: 0.5,
+          vocabulary: 0.5,
+          total: 2.0,
+          analysis: `Bài viết quá ngắn (${wordCount} từ), không đủ dữ liệu để đánh giá.`
         },
-        strengths: ['Đã hoàn thành phần trắc nghiệm.'],
-        areasForImprovement: ['Chưa đạt dung lượng yêu cầu (120-150 từ).'],
+        strengths: [],
+        areasForImprovement: ['Bài làm chưa đạt dung lượng tối thiểu (yêu cầu từ 120 từ trở lên).'],
         suggestedCorrections: [
           {
             original: firstSentence,
-            suggestion: 'Dear Alex, I am very glad to receive your email regarding online learning.',
-            reason: 'Cần mở đầu thư trang trọng và đúng chủ đề hơn.'
+            suggestion: 'Hãy viết thành một đoạn văn hoàn chỉnh có mở bài, thân bài và kết bài.',
+            reason: 'Bài viết cần triển khai chi tiết các ý theo đề bài.'
           }
         ],
-        cefrLevel: 'A1 / A2',
-        overallComment: `Chào ${studentName || 'bạn'}! Bài viết quá ngắn nên điểm Writing bị hạn chế.`
+        cefrLevel: 'A1',
+        overallComment: `Chào ${studentName || 'bạn'}! Bài viết chỉ có ${wordCount} từ nên không thể tính điểm đạt yêu cầu.`
       };
     } else {
-      const isLongEnough = wordCount >= 110;
-      const ta = isLongEnough ? 6.5 : 5.0;
-      const oc = isLongEnough ? 6.0 : 5.0;
-      const gr = 5.5;
-      const voc = 5.5;
+      // Chấm điểm linh hoạt dựa trên độ dài thực tế của học viên
+      const isStandardLength = wordCount >= 120;
+      const ta = isStandardLength ? 6.5 : (wordCount >= 60 ? 4.5 : 3.0);
+      const oc = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
+      const gr = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
+      const voc = isStandardLength ? 6.0 : (wordCount >= 60 ? 4.0 : 2.5);
       const totalWriting = Number((ta + oc + gr + voc).toFixed(1));
 
       evaluation = {
         taskBreakdown: {
           taskAchievement: ta,
-          taskAchievementComment: 'Đánh giá mức độ hoàn thành nhiệm vụ và dung lượng từ.',
+          taskAchievementComment: 'Mức độ hoàn thành nội dung và độ dài bài viết.',
           organization: oc,
-          organizationComment: 'Bố cục email rõ ràng, mạch lạc.',
+          organizationComment: 'Tính liên kết và bố cục câu.',
           grammar: gr,
           grammarComment: 'Độ chính xác về cấu trúc ngữ pháp.',
           vocabulary: voc,
-          vocabularyComment: 'Vốn từ vựng phù hợp với chủ đề.',
+          vocabularyComment: 'Sự phong phú và chính xác của từ vựng.',
           total: totalWriting,
-          analysis: `Bài viết đạt ${wordCount} từ, đáp ứng tốt yêu cầu đề bài.`
+          analysis: `Bài viết đạt ${wordCount} từ.`
         },
-        strengths: [`Dung lượng chuẩn mực (${wordCount} từ).`, 'Bố cục email đầy đủ các ý theo yêu cầu của đề.'],
-        areasForImprovement: ['Cần chú ý trau chuốt thêm từ vựng học thuật để đạt band điểm cao hơn.'],
-        
-        // 🌟 TRẢ VỀ NHIỀU CÂU GỐC THỰC TẾ CỦA HỌC VIÊN
+        strengths: [`Đã viết được ${wordCount} từ.`, 'Có nỗ lực hoàn thành nội dung đề bài.'],
+        areasForImprovement: ['Cần mở rộng thêm các ý phụ và kiểm tra lại lỗi chính tả, ngữ pháp cơ bản.'],
         suggestedCorrections: [
           {
             original: firstSentence,
-            suggestion: `${firstSentence} (Gợi ý nâng cấp: Có thể dùng cấu trúc mở đầu tự nhiên hơn như "Dear Alex, Hope you're doing well!").`,
-            reason: 'Cải thiện văn phong mở đầu thư thân mật.'
-          },
-          {
-            original: secondSentence,
-            suggestion: `${secondSentence} (Gợi ý nâng cấp: Bổ sung thêm các từ nối học thuật như "Furthermore" hoặc "In addition" để tăng độ liên kết).`,
-            reason: 'Tối ưu hóa độ mạch lạc (Coherence) trong thân bài.'
+            suggestion: `${firstSentence} (Gợi ý diễn đạt lại tự nhiên hơn)`,
+            reason: 'Cải thiện cách dùng từ ở câu mở đầu.'
           }
         ],
-        
-        cefrLevel: totalWriting >= 23 ? 'B1+ / B2' : 'B1',
-        overallComment: `Chúc mừng ${studentName || 'bạn'}! Bài viết có bố cục rất tốt, lập luận chặt chẽ và tự nhiên.`
+        cefrLevel: totalWriting >= 22 ? 'B2' : (totalWriting >= 16 ? 'B1' : 'A2'),
+        overallComment: `Cố lên ${studentName || 'bạn'} nhé! Bài viết cần trau chuốt thêm các cấu trúc câu phức để đạt band điểm cao hơn.`
       };
     }
 
+    // 🌟 Lưu vào đúng bảng `submissions` đã tạo trên Supabase
     if (supabaseUrl && supabaseAnonKey && (studentName || studentPhone)) {
       try {
         const supabase = createClient(supabaseUrl, supabaseAnonKey);
-        await supabase.from('test_leads').insert([
+        await supabase.from('submissions').insert([
           {
             full_name: studentName,
             phone: studentPhone,
-            target_goal: targetGoal || 'B2',
+            target: targetGoal || 'B2',
             total_score: Number(((objectiveScore || 0) + evaluation.taskBreakdown.total).toFixed(1)),
-            knowledge_score: objectiveScore || 0,
+            listening_score: 0,
+            reading_score: objectiveScore || 0,
             writing_score: evaluation.taskBreakdown.total,
-            writing_task1: task1,
-            recommended_course: evaluation.cefrLevel
+            speaking_score: 0,
+            details: JSON.stringify({
+              task1,
+              evaluation,
+              wordCount
+            })
           }
         ]);
       } catch (dbErr) {
-        console.error('Lỗi DB:', dbErr);
+        console.error('Lỗi khi lưu Database:', dbErr);
       }
     }
 
     return NextResponse.json({ success: true, evaluation });
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Lỗi' }, { status: 500 });
+    console.error('Lỗi API evaluate-writing:', error);
+    return NextResponse.json({ success: false, message: 'Lỗi xử lý bài viết' }, { status: 500 });
   }
 }
